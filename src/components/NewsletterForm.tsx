@@ -2,7 +2,7 @@
 
 import { Check } from "lucide-react";
 import { useState, useTransition } from "react";
-import { subscribeNewsletter } from "@/app/community/actions";
+import { subscribeNewsletter } from "@/app/(site)/community/actions";
 import { cn } from "@/lib/cn";
 
 export function NewsletterForm({ className, compact }: { className?: string; compact?: boolean }) {

@@ -83,6 +83,10 @@ export interface Booking {
   details?: string;
   createdAt: number;
   expiresAt: number;
+  /** Set by the admin dashboard. */
+  confirmedAt?: number;
+  releasedAt?: number;
+  handledBy?: string;
 }
 
 export function blockedDateId(resourceId: string, date: string): string {

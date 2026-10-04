@@ -11,6 +11,11 @@ export class ConflictError extends Error {
 
 export class DuplicateReferenceError extends Error {}
 
+/** A dashboard action that doesn't fit the booking's current state (e.g. confirming a released booking). */
+export class BookingStateError extends Error {}
+
+export class SlugTakenError extends Error {}
+
 /**
  * Storage boundary for the booking engine. Firestore in production; an
  * in-memory store for local development when Firebase isn't configured.
@@ -31,13 +36,31 @@ export interface BookingStore {
    */
   commitEnquiry(lines: CartLine[], dates: string[], booking: Booking): Promise<void>;
   getBooking(reference: string): Promise<Booking | null>;
+
+  // ── Admin dashboard ──────────────────────────────────────────
+  /** Every resource, including inactive ones, sorted by sortOrder. */
+  listAllResources(): Promise<Resource[]>;
+  /** Create or update. Throws SlugTakenError if another resource of any kind uses the slug. */
+  saveResource(resource: Resource): Promise<void>;
+  /** Newest first. */
+  listBookings(limit?: number): Promise<Booking[]>;
+  /** Bookings whose date range overlaps [from, to]. */
+  listBookingsOverlapping(from: string, to: string): Promise<Booking[]>;
+  /**
+   * Mark a held booking paid: its holds become permanent. If the hold had expired, re-checks
+   * that nobody else has taken the stock since (ConflictError). Returns the updated booking.
+   */
+  confirmBooking(reference: string, by: string, now: number): Promise<Booking>;
+  /** Cancel a held or confirmed booking and free its dates/seats. */
+  releaseBooking(reference: string, by: string, now: number): Promise<Booking>;
 }
 
 let store: Promise<BookingStore> | undefined;
 
 export function getStore(): Promise<BookingStore> {
   store ??= (async () => {
-    if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON || process.env.FIRESTORE_EMULATOR_HOST) {
+    const { isFirebaseConfigured } = await import("@/lib/firebase/admin");
+    if (isFirebaseConfigured()) {
       const { FirestoreStore } = await import("./store-firestore");
       return new FirestoreStore();
     }

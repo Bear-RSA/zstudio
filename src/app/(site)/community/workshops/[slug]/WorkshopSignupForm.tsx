@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { createWorkshopSignup } from "@/app/community/actions";
+import { createWorkshopSignup } from "@/app/(site)/community/actions";
 import { QtyStepper } from "@/components/QtyStepper";
 import { workshopAttendeeSchema, type WorkshopAttendeeInput } from "@/lib/booking/schema";
 import { formatRand } from "@/lib/money";

@@ -1,5 +1,6 @@
 import "server-only";
 import { Resend } from "resend";
+import { BookingConfirmedEmail } from "@/emails/BookingConfirmedEmail";
 import { EnquiryEmail } from "@/emails/EnquiryEmail";
 import { business } from "@/lib/config";
 import { formatRand } from "@/lib/money";
@@ -44,4 +45,21 @@ export async function sendEnquiryEmails(booking: Booking): Promise<void> {
   if (customer.status === "rejected" || customer.value.error) {
     console.error("[email] customer acknowledgement failed", customer);
   }
+}
+
+/** "Payment received — you're booked", sent when staff confirm a booking in the dashboard. */
+export async function sendBookingConfirmedEmail(booking: Booking): Promise<void> {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    console.warn(`[email] RESEND_API_KEY not set — skipping confirmation email for ${booking.reference}`);
+    return;
+  }
+  const { error } = await new Resend(key).emails.send({
+    from: business.emailFrom,
+    to: booking.customer.email,
+    replyTo: business.bookingsInbox,
+    subject: `Confirmed: ${booking.reference} — payment received`,
+    react: BookingConfirmedEmail({ booking, contactEmail: business.bookingsInbox }),
+  });
+  if (error) throw new Error(error.message);
 }

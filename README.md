@@ -66,7 +66,27 @@ Key code: `src/lib/booking/` (engine), `src/app/book/actions.ts` (server actions
   - Hover effects are gated to fine pointers.
   - `prefers-reduced-motion` is respected.
 
-## Phase 2 / 3 notes
+## Admin dashboard (`/admin`)
 
-- **Admin:** `/admin` behind Firebase Auth, with a staff allowlist via custom claims. It lists bookings and offers confirm/release, implemented as a transaction that flips `holds[ref].status` on each `blockedDates` doc plus `bookings/{ref}.status`. It shows an inventory view of "out today" and a month calendar built from `blockedDates`. A Vercel Cron job marks expired holds.
+It has four sections:
+- **Overview:** awaiting payment, gear out today, studio today.
+- **Bookings:** filter, search and a detail page per booking.
+- **Calendar:** a month view of everything booked or held.
+- **Inventory:** stock vs. out/held today, plus add and edit.
+
+Actions:
+- **Confirm payment** makes a booking's holds permanent and can email the customer "payment received". If the 48h hold had already expired, it first re-checks that nobody else has taken the stock since.
+- **Release / cancel** frees the dates or seats immediately.
+- **Inventory edits** go live on the public site straight away. Item ids never change, because bookings reference them, so hide an item instead of deleting it.
+
+**Sign-in** uses Firebase Auth email + password. The browser exchanges a fresh ID token for an httpOnly session cookie (5 days, revocable). Every admin page and server action checks the cookie.
+
+1. In the Firebase console, go to Authentication and enable *Email/Password*. Add a user for each staff member.
+2. Give each one access with `npm run admin:grant -- staff@example.com`, or list their emails in `ADMIN_EMAILS`. `--revoke` removes access and signs them out everywhere.
+3. Set the `NEXT_PUBLIC_FIREBASE_*` web-app config in `.env.local`.
+
+Without Firebase, `npm run dev` opens the dashboard in **dev mode**: a banner is shown and there's no sign-in. Dev mode never runs in production.
+
+## Phase 3 notes
+
 - **OZOW:** after `createEnquiry`, redirect to OZOW with the booking reference as `TransactionReference`. The webhook verifies the hash and confirms the booking. EFT stays as a fallback.

@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test:emulator": "firebase emulators:exec --only firestore --project zstudio-dev \"vitest run\"",
     "assets:upload": "tsx scripts/upload-brand-assets.ts",
-    "logo": "tsx scripts/make-logo.ts"
+    "logo": "tsx scripts/make-logo.ts",
+    "admin:grant": "tsx scripts/grant-admin.ts"
   },
   "dependencies": {
     "@date-fns/tz": "^1.5.0",
@@ -20,6 +21,7 @@
     "@react-email/components": "^1.0.12",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
+    "firebase": "^12.19.0",
     "firebase-admin": "^14.5.0",
     "lucide-react": "^1.52.0",
     "next": "15.5.27",
