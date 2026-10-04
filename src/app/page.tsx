@@ -1,103 +1,129 @@
-import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { Media } from "@/components/Media";
+import { Reveal } from "@/components/Reveal";
+import { StudioScene } from "@/components/StudioScene";
+import { getStudio, listEquipment } from "@/lib/booking/catalog";
+import { formatRand } from "@/lib/money";
 
-export default function Home() {
+export const revalidate = 300;
+
+const uses = ["Photoshoots", "Podcasts", "Music videos", "Headshots"];
+
+export default async function Home() {
+  const [studio, equipment] = await Promise.all([getStudio(), listEquipment()]);
+  const categories = [...new Set(equipment.map((e) => e.category))];
+  const fromRate = equipment.length ? Math.min(...equipment.map((e) => e.dailyRate)) : 0;
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <>
+      {/* Hero */}
+      <section className="relative -mt-16 sm:-mt-20">
+        <div className="grain relative h-[92dvh] min-h-[560px] w-full overflow-hidden">
+          {/* Studio photography when Zstudio provides it; until then a low-key camera shot. */}
+          <Media
+            src={studio?.images[0] ?? "/equipment/sony-a7siii.jpg"}
+            alt=""
+            priority
+            className="absolute inset-0"
+            imgClassName="object-[70%_50%] opacity-80"
+            label=" "
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/70 to-ink/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/50" />
+          <div className="stagger relative mx-auto flex h-full max-w-7xl flex-col justify-end px-4 pb-14 sm:px-8 sm:pb-20">
+            <p className="eyebrow">
+              Cape Town · Equipment &amp; studio hire
+            </p>
+            <h1 style={{ ["--i" as string]: 1 }} className="mt-5 max-w-4xl font-display text-[clamp(44px,8vw,112px)] leading-[0.95] font-normal tracking-[-0.01em]">
+              Light it <em className="text-rose italic">properly.</em>
+            </h1>
+            <p style={{ ["--i" as string]: 2 }} className="mt-6 max-w-md text-[15px] leading-relaxed text-muted">
+              Cinema cameras, lighting, backdrops and audio by the day — and a blacked-out studio built for the shot
+              you&rsquo;ve been planning.
+            </p>
+            <div style={{ ["--i" as string]: 3 }} className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <Link href="/studio" className="btn-primary">
+                Book the studio
+              </Link>
+              <Link href="/equipment" className="btn-ghost">
+                Hire equipment
+              </Link>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </section>
+
+      {/* Two doors */}
+      <section className="mx-auto mt-20 grid max-w-7xl gap-6 px-4 sm:mt-28 sm:px-8 md:grid-cols-2">
+        <Link href="/studio" className="card-hover group block">
+          <Reveal>
+            {studio?.images.length ? (
+              <Media
+                src={studio.images[1] ?? studio.images[0]}
+                alt="The studio"
+                sizes="(min-width: 768px) 50vw, 100vw"
+                className="aspect-[4/5]"
+                imgClassName="card-img"
+              />
+            ) : (
+              <StudioScene className="aspect-[4/5]" />
+            )}
+          </Reveal>
+          <div className="mt-5 flex items-end justify-between gap-4">
+            <div>
+              <p className="eyebrow">Studio hire</p>
+              <h2 className="mt-2 font-display text-4xl">The Studio</h2>
+            </div>
+            {studio && <p className="text-sm text-muted tabular-nums">{formatRand(studio.dailyRate)} / day</p>}
+          </div>
+          <p className="mt-3 text-sm text-muted">{uses.join(" · ")}</p>
+        </Link>
+
+        <Link href="/equipment" className="card-hover group block md:mt-24">
+          <Reveal>
+            <Media
+              // The lens shot is the one that survives a portrait crop.
+              src={(equipment.find((e) => e.id === "sigma-24-70") ?? equipment[0])?.images[0]}
+              alt="Equipment"
+              sizes="(min-width: 768px) 50vw, 100vw"
+              className="aspect-[4/5]"
+              imgClassName="card-img"
+              label="EQUIPMENT"
+            />
+          </Reveal>
+          <div className="mt-5 flex items-end justify-between gap-4">
+            <div>
+              <p className="eyebrow">Equipment hire</p>
+              <h2 className="mt-2 font-display text-4xl">The Kit Room</h2>
+            </div>
+            {fromRate > 0 && <p className="text-sm text-muted tabular-nums">from {formatRand(fromRate)} / day</p>}
+          </div>
+          <p className="mt-3 text-sm text-muted">{categories.join(" · ")}</p>
+        </Link>
+      </section>
+
+      {/* How it works */}
+      <section className="mx-auto mt-28 max-w-7xl px-4 sm:px-8">
+        <p className="eyebrow">How booking works</p>
+        <ol className="mt-8 grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-4">
+          {[
+            ["Choose", "Add gear, the studio, or both to your hire."],
+            ["Pick dates", "The calendar only shows days that are free."],
+            ["Enquire", "Send your details. We hold it for 48 hours."],
+            ["Pay by EFT", "Use your reference. Send proof of payment — done."],
+          ].map(([title, body], i) => (
+            <li key={title} className="bg-ink p-6 sm:p-8">
+              <span className="font-display text-sm text-rose tabular-nums">0{i + 1}</span>
+              <p className="mt-6 font-display text-2xl">{title}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{body}</p>
+            </li>
+          ))}
+        </ol>
+        <Link href="/equipment" className="link-underline mt-8 inline-flex items-center gap-2 text-sm text-muted">
+          Start with equipment <ArrowRight size={14} />
+        </Link>
+      </section>
+    </>
   );
 }
