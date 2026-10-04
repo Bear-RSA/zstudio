@@ -41,7 +41,7 @@ export function SiteHeader({ hasMark }: { hasMark: boolean }) {
       <CartHydrator />
       <header
         className={cn(
-          "sticky top-0 z-40 border-b transition-[background-color,border-color] duration-300",
+          "sticky top-0 z-40 border-b transition-[background-color,border-color,backdrop-filter] duration-200 ease-[ease]",
           scrolled ? "border-line bg-ink/85 backdrop-blur-md" : "border-transparent bg-transparent",
         )}
       >

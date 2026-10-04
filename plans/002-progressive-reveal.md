@@ -1,6 +1,6 @@
 # 002 — Make the scroll reveal progressive (visible by default, armed only when off-screen)
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: e219be5 (working tree — all app code is uncommitted on top of this commit)
 - **Severity**: MEDIUM
 - **Category**: Physicality & origin / Accessibility

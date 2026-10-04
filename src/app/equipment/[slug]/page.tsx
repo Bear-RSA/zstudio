@@ -30,8 +30,8 @@ export default async function EquipmentItemPage({ params }: Props) {
       </Link>
       <div className="mt-8 grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
         <div className="grid gap-4">
-          {gallery.map((id, i) => (
-            <Reveal key={id ?? i}>
+          {gallery.map((id, i) => {
+            const media = (
               <Media
                 src={id}
                 alt={`${item.name}${i ? ` — view ${i + 1}` : ""}`}
@@ -41,8 +41,10 @@ export default async function EquipmentItemPage({ params }: Props) {
                 label={item.category.toUpperCase()}
                 showCredit
               />
-            </Reveal>
-          ))}
+            );
+            // The primary image is the page's main content: show it immediately.
+            return i === 0 ? <div key={id ?? i}>{media}</div> : <Reveal key={id ?? i}>{media}</Reveal>;
+          })}
         </div>
 
         <div className="lg:sticky lg:top-28 lg:self-start">

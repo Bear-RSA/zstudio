@@ -133,7 +133,7 @@
   }
 
   .card-img {
-    transition: transform 600ms var(--ease-out);
+    transition: transform 300ms var(--ease-out);
   }
 
   .field {
@@ -149,19 +149,25 @@
     border-color: var(--color-danger);
   }
 
-  /* One-time image reveal (rare, marketing — allowed to be slower). */
-  .reveal {
+  /* One-time image reveal (rare, marketing — allowed to be slower).
+     Visible by default; Reveal.tsx arms it only when it starts off-screen. */
+  .reveal[data-armed="true"] {
     clip-path: inset(0 0 100% 0);
-    transition: clip-path 900ms var(--ease-in-out);
   }
-  .reveal[data-revealed="true"] {
+  .reveal[data-armed="true"][data-revealed="true"] {
     clip-path: inset(0 0 0 0);
+    transition: clip-path 900ms var(--ease-in-out);
   }
 
   /* First-load stagger for grids. Decorative; never blocks interaction. */
   .stagger > * {
     animation: rise 420ms var(--ease-out) both;
-    animation-delay: calc(var(--i, 0) * 40ms);
+    animation-delay: calc(var(--i, 0) * var(--stagger-step, 40ms));
+  }
+
+  /* Returning to the grid in the same session: no entrance, cards are just there. */
+  html[data-grid-seen] .stagger-once > * {
+    animation: none;
   }
 
   .grain::after {
@@ -215,13 +221,13 @@
   .btn-ghost:active:not(:disabled) {
     transform: none;
   }
-  .reveal {
+  .reveal[data-armed="true"] {
     clip-path: none;
     opacity: 0;
-    transition: opacity 400ms ease;
   }
-  .reveal[data-revealed="true"] {
+  .reveal[data-armed="true"][data-revealed="true"] {
     opacity: 1;
+    transition: opacity 400ms ease;
   }
   .stagger > * {
     animation-name: fade;
@@ -230,6 +236,9 @@
   .tick {
     transition: none;
     animation: none;
+  }
+  .card-hover:hover .card-img {
+    transform: none;
   }
   .morph[data-hidden="true"] {
     transform: none;

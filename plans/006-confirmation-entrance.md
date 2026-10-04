@@ -1,6 +1,6 @@
 # 006 — Give the booking confirmation a one-time entrance
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: e219be5 (working tree — all app code is uncommitted on top of this commit)
 - **Severity**: LOW (missed opportunity — additive)
 - **Category**: Missed opportunities

@@ -32,8 +32,14 @@ const hasMark = existsSync(path.join(process.cwd(), "public", "brand", "mark.png
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-ZA" className={`${inter.variable} ${cormorant.variable}`}>
+    <html lang="en-ZA" className={`${inter.variable} ${cormorant.variable}`} suppressHydrationWarning>
       <body className="flex min-h-dvh flex-col">
+        {/* Restores "grid already seen this session" before first paint on hard reloads (see EquipmentGrid). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(sessionStorage.getItem("zs-grid-seen"))document.documentElement.setAttribute("data-grid-seen","")}catch(e){}`,
+          }}
+        />
         <SiteHeader hasMark={hasMark} />
         <main className="flex-1">{children}</main>
         <SiteFooter />

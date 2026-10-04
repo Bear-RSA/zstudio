@@ -8,14 +8,14 @@ feel check. Execute them with any agent, one at a time, in the order below.
 
 | # | Plan | Severity | Category | Status |
 | --- | --- | --- | --- | --- |
-| 001 | [Stop hiding above-the-fold images behind the scroll reveal](001-no-reveal-above-the-fold.md) | HIGH | Purpose & frequency / Performance | TODO |
-| 002 | [Make the scroll reveal progressive](002-progressive-reveal.md) | MEDIUM | Physicality / Accessibility | TODO |
-| 003 | [Play the equipment grid stagger once per session](003-grid-stagger-once-per-session.md) | MEDIUM | Purpose & frequency | TODO |
-| 004 | [Tighten the card hover zoom; drop it under reduced motion](004-card-hover-zoom.md) | LOW | Easing & duration / Accessibility | TODO |
-| 005 | [Fade the header's backdrop blur with its tint](005-header-blur-transition.md) | LOW | Cohesion & tokens | TODO |
-| 006 | [One-time entrance on the booking confirmation](006-confirmation-entrance.md) | LOW | Missed opportunity | TODO |
-| 007 | [Soften the newsletter success swap](007-newsletter-success-crossfade.md) | LOW | Missed opportunity | TODO |
-| 008 | [Let the calendar settle in when availability arrives](008-calendar-loading-fade.md) | LOW | Missed opportunity | TODO |
+| 001 | [Stop hiding above-the-fold images behind the scroll reveal](001-no-reveal-above-the-fold.md) | HIGH | Purpose & frequency / Performance | DONE |
+| 002 | [Make the scroll reveal progressive](002-progressive-reveal.md) | MEDIUM | Physicality / Accessibility | DONE |
+| 003 | [Play the equipment grid stagger once per session](003-grid-stagger-once-per-session.md) | MEDIUM | Purpose & frequency | DONE |
+| 004 | [Tighten the card hover zoom; drop it under reduced motion](004-card-hover-zoom.md) | LOW | Easing & duration / Accessibility | DONE |
+| 005 | [Fade the header's backdrop blur with its tint](005-header-blur-transition.md) | LOW | Cohesion & tokens | DONE |
+| 006 | [One-time entrance on the booking confirmation](006-confirmation-entrance.md) | LOW | Missed opportunity | DONE |
+| 007 | [Soften the newsletter success swap](007-newsletter-success-crossfade.md) | LOW | Missed opportunity | DONE |
+| 008 | [Let the calendar settle in when availability arrives](008-calendar-loading-fade.md) | LOW | Missed opportunity | DONE |
 
 ## Recommended order
 

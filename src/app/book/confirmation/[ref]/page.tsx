@@ -36,19 +36,19 @@ export default async function ConfirmationPage({ params }: { params: Promise<{ r
 
   // No customer PII here — the reference is all that's in the URL.
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="stagger mx-auto max-w-2xl [--stagger-step:60ms]">
       {/* A workshop sign-up never touched the gear cart, so leave it alone. */}
       {!isWorkshop && <ClearCart />}
       <p className="eyebrow text-rose!">{isWorkshop ? "Seat reserved" : "Enquiry received"}</p>
-      <h1 className="mt-3 font-display text-[clamp(36px,6vw,60px)] leading-[1.05]">
+      <h1 style={{ ["--i" as string]: 1 }} className="mt-3 font-display text-[clamp(36px,6vw,60px)] leading-[1.05]">
         {isWorkshop ? "See you there." : <>You&rsquo;re pencilled in.</>}
       </h1>
-      <p className="mt-4 text-[15px] leading-relaxed text-muted">
+      <p style={{ ["--i" as string]: 2 }} className="mt-4 text-[15px] leading-relaxed text-muted">
         We&rsquo;ve emailed you a copy. Pay by EFT using your reference below, then send proof of payment and
         we&rsquo;ll confirm your booking. Your {isWorkshop ? "seat is" : "dates are"} held until <span className="text-bone">{expires}</span>.
       </p>
 
-      <div className="mt-10 border border-rose p-6 sm:p-8">
+      <div style={{ ["--i" as string]: 3 }} className="mt-10 border border-rose p-6 sm:p-8">
         <p className="eyebrow">Your payment reference</p>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
           <p className="font-mono text-[clamp(26px,6vw,36px)] tracking-[0.06em] text-rose">{booking.reference}</p>
@@ -60,7 +60,7 @@ export default async function ConfirmationPage({ params }: { params: Promise<{ r
         </div>
       </div>
 
-      <section className="mt-10">
+      <section style={{ ["--i" as string]: 4 }} className="mt-10">
         <p className="eyebrow">Banking details</p>
         <dl className="mt-4 border-t border-line">
           {rows.map(([k, v]) => (
@@ -76,7 +76,7 @@ export default async function ConfirmationPage({ params }: { params: Promise<{ r
         </dl>
       </section>
 
-      <section className="mt-10">
+      <section style={{ ["--i" as string]: 5 }} className="mt-10">
         <p className="eyebrow">Proof of payment</p>
         <p className="mt-3 text-[15px] leading-relaxed">
           Email it to{" "}
@@ -90,7 +90,7 @@ export default async function ConfirmationPage({ params }: { params: Promise<{ r
         </p>
       </section>
 
-      <section className="mt-10 border-t border-line pt-6">
+      <section style={{ ["--i" as string]: 6 }} className="mt-10 border-t border-line pt-6">
         <p className="eyebrow">Booking</p>
         <p className="mt-3 text-[15px]">
           {formatDisplayDate(booking.startDate)}

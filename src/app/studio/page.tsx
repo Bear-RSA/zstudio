@@ -45,13 +45,13 @@ export default async function StudioPage() {
           </div>
         </div>
 
-        <Reveal className="mt-12">
+        <div className="mt-12">
           {hero ? (
             <Media src={hero} alt="Inside the Z Studios space" priority sizes="100vw" className="aspect-[16/9]" />
           ) : (
             <StudioScene priority className="aspect-[16/9]" />
           )}
-        </Reveal>
+        </div>
       </section>
 
       <section className="mx-auto mt-20 max-w-7xl px-4 sm:px-8">

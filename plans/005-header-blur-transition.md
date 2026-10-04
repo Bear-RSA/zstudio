@@ -1,6 +1,6 @@
 # 005 — Fade the header's backdrop blur with its tint
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: e219be5 (working tree — all app code is uncommitted on top of this commit)
 - **Severity**: LOW
 - **Category**: Cohesion & tokens

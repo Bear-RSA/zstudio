@@ -14,7 +14,13 @@ export function NewsletterForm({ className, compact }: { className?: string; com
 
   if (done) {
     return (
-      <p className={cn("flex items-center gap-2 text-sm text-rose", className)} role="status">
+      <p
+        className={cn(
+          "flex items-center gap-2 text-sm text-rose transition-[opacity,filter] duration-200 ease-[ease] starting:opacity-0 starting:blur-[2px]",
+          className,
+        )}
+        role="status"
+      >
         <Check size={14} /> You&rsquo;re on the list. Watch your inbox for workshops and studio news.
       </p>
     );

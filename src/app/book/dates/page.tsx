@@ -108,7 +108,10 @@ export default function DatesPage() {
 
         <div
           ref={setPanel}
-          className={cn("mt-8 border border-line bg-surface p-3 sm:p-6", !unavailable && "opacity-50")}
+          className={cn(
+            "mt-8 border border-line bg-surface p-3 transition-opacity duration-150 ease-[ease] sm:p-6",
+            !unavailable && "opacity-50",
+          )}
           aria-busy={!unavailable}
         >
           <DayPicker

@@ -16,6 +16,17 @@ export function EquipmentGrid({ items }: { items: Item[] }) {
   // Leaving display:none restarts CSS animations, so drop the stagger once the user filters.
   const [filtered, setFiltered] = useState(false);
 
+  // Once the entrance has finished, remember it for this session so returning to the grid
+  // doesn't replay it. Marking it at the end (not on unmount) means nothing visibly changes.
+  const markSeen = () => {
+    document.documentElement.setAttribute("data-grid-seen", "");
+    try {
+      sessionStorage.setItem("zs-grid-seen", "1");
+    } catch {
+      /* storage blocked — the stagger simply replays */
+    }
+  };
+
   return (
     <>
       {/* Filter chips: colour change only, no motion — used repeatedly. */}
@@ -39,8 +50,15 @@ export function EquipmentGrid({ items }: { items: Item[] }) {
         ))}
       </div>
 
-      {/* Stagger plays on first load only; filtering is instant. */}
-      <ul className={cn(!filtered && "stagger", "mt-8 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3")}>
+      {/* Stagger plays once per session; filtering and return visits are instant. */}
+      <ul
+        className={cn(!filtered && "stagger stagger-once", "mt-8 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3")}
+        onAnimationEnd={(e) => {
+          // The last card to finish is the one with the longest delay.
+          // ("fade" is the reduced-motion variant.)
+          if ((e.animationName === "rise" || e.animationName === "fade") && e.target === e.currentTarget.lastElementChild) markSeen();
+        }}
+      >
         {items.map(({ description, ...item }, i) => (
           <li
             key={item.resourceId}

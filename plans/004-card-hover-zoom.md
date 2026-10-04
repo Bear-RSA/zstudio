@@ -1,6 +1,6 @@
 # 004 — Tighten the card image hover zoom and drop it under reduced motion
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: e219be5 (working tree — all app code is uncommitted on top of this commit)
 - **Severity**: LOW
 - **Category**: Easing & duration / Accessibility

@@ -1,6 +1,6 @@
 # 003 — Play the equipment grid stagger once per session, not on every return
 
-- **Status**: TODO
+- **Status**: DONE — implemented with one deviation: the grid is marked "seen" when the stagger finishes (onAnimationEnd on the last card), not on unmount. React dev mode runs effect cleanups immediately, which would have cut the stagger off mid-play; marking at the end is also invisible in production.
 - **Commit**: e219be5 (working tree — all app code is uncommitted on top of this commit)
 - **Severity**: MEDIUM
 - **Category**: Purpose & frequency
