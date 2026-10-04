@@ -44,3 +44,6 @@ next-env.d.ts
 # firebase
 *-debug.log
 .firebase/
+
+# local production builds (NEXT_DIST_DIR)
+.next-*/

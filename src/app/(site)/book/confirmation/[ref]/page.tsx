@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { business } from "@/lib/config";
+import { decodeDemoSummary } from "@/lib/booking/demo-summary";
 import { getStore } from "@/lib/booking/store";
+import { isDemoMode } from "@/lib/demo";
 import { REFERENCE_PATTERN } from "@/lib/booking/reference";
 import { formatDisplayDate } from "@/lib/booking/dates";
 import { formatRand } from "@/lib/money";
@@ -8,10 +10,18 @@ import { ClearCart, CopyButton } from "./client";
 
 export const dynamic = "force-dynamic";
 
-export default async function ConfirmationPage({ params }: { params: Promise<{ ref: string }> }) {
+export default async function ConfirmationPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ ref: string }>;
+  searchParams: Promise<{ d?: string }>;
+}) {
   const { ref } = await params;
   if (!REFERENCE_PATTERN.test(ref)) notFound();
-  const booking = await (await getStore()).getBooking(ref);
+  const { d } = await searchParams;
+  const booking =
+    (await (await getStore()).getBooking(ref)) ?? (isDemoMode() && d ? decodeDemoSummary(d, ref) : null);
   if (!booking) notFound();
 
   const { bank } = business;

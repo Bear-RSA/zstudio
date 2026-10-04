@@ -31,7 +31,7 @@ export function WorkshopSignupForm({ workshopId, price, maxSeats }: { workshopId
   const onSubmit = (attendee: WorkshopAttendeeInput) =>
     startTransition(async () => {
       const res = await createWorkshopSignup({ workshopId, seats, attendee, acceptTerms: accepted, website });
-      if (res.ok) router.push(`/book/confirmation/${res.reference}`);
+      if (res.ok) router.push(`/book/confirmation/${res.reference}${res.demo ? `?d=${res.demo}` : ""}`);
       else {
         toast.error(res.error);
         router.refresh(); // seat count may have changed

@@ -87,6 +87,19 @@ Actions:
 
 Without Firebase, `npm run dev` opens the dashboard in **dev mode**: a banner is shown and there's no sign-in. Dev mode never runs in production.
 
+## Deploying to Vercel
+
+1. Import the GitHub repo in Vercel. The framework (Next.js) is detected automatically, and functions run in Cape Town (`cpt1`, set in `vercel.json`).
+2. **Client preview (no Firebase yet):** set `DEMO_MODE=1` in Project → Settings → Environment Variables, then deploy. You get:
+   - sample inventory;
+   - a "Preview site" banner;
+   - an open `/admin` with sample data;
+   - no emails sent;
+   - bookings that aren't saved (each serverless instance has its own memory).
+3. **Going live:** add every variable from `.env.example` (Firebase service account JSON, `NEXT_PUBLIC_FIREBASE_*`, Resend, banking details, `ADMIN_EMAILS`). Run `npm run seed` once against the real Firestore, then deploy indexes and rules with `npx firebase deploy --only firestore`. Demo mode switches itself off once Firebase is configured; remove `DEMO_MODE` anyway.
+
+Without `DEMO_MODE` or Firebase, the production build fails on purpose, rather than serving a site that silently loses bookings.
+
 ## Phase 3 notes
 
 - **OZOW:** after `createEnquiry`, redirect to OZOW with the booking reference as `TransactionReference`. The webhook verifies the hash and confirms the booking. EFT stays as a fallback.

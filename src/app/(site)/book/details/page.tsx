@@ -65,7 +65,7 @@ export default function DetailsPage() {
 
       if (result.ok) {
         // The confirmation page clears the cart; clearing here would trip the cart guard first.
-        router.replace(`/book/confirmation/${result.reference}`);
+        router.replace(`/book/confirmation/${result.reference}${result.demo ? `?d=${result.demo}` : ""}`);
         return;
       }
       if (result.conflicts?.length) {

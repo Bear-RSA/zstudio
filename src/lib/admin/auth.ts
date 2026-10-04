@@ -2,6 +2,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAuth } from "firebase-admin/auth";
+import { isDemoMode } from "@/lib/demo";
 import { firebaseApp, isFirebaseConfigured } from "@/lib/firebase/admin";
 
 export const SESSION_COOKIE = "__session"; // the only cookie name Firebase Hosting/CDNs pass through
@@ -9,7 +10,8 @@ export const SESSION_DAYS = 5;
 
 export interface AdminUser {
   email: string;
-  devBypass?: boolean;
+  /** Signed in without Firebase: local dev, or a DEMO_MODE preview on sample data. */
+  devBypass?: "dev" | "demo";
 }
 
 /**
@@ -36,7 +38,8 @@ export function isAdminToken(token: { email?: string; admin?: unknown; email_ver
 
 /** Current admin, or null. Verifies the session cookie (and that it hasn't been revoked). */
 export async function getAdmin(): Promise<AdminUser | null> {
-  if (isDevBypass()) return { email: "dev@localhost", devBypass: true };
+  if (isDevBypass()) return { email: "dev@localhost", devBypass: "dev" };
+  if (isDemoMode()) return { email: "demo@preview", devBypass: "demo" };
   const cookie = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!cookie) return null;
   try {

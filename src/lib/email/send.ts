@@ -3,12 +3,13 @@ import { Resend } from "resend";
 import { BookingConfirmedEmail } from "@/emails/BookingConfirmedEmail";
 import { EnquiryEmail } from "@/emails/EnquiryEmail";
 import { business } from "@/lib/config";
+import { isDemoMode } from "@/lib/demo";
 import { formatRand } from "@/lib/money";
 import type { Booking } from "@/lib/booking/types";
 
 export async function sendEnquiryEmails(booking: Booking): Promise<void> {
   const key = process.env.RESEND_API_KEY;
-  if (!key) {
+  if (!key || isDemoMode()) {
     console.warn(`[email] RESEND_API_KEY not set — skipping emails for ${booking.reference}`);
     return;
   }
@@ -50,7 +51,7 @@ export async function sendEnquiryEmails(booking: Booking): Promise<void> {
 /** "Payment received — you're booked", sent when staff confirm a booking in the dashboard. */
 export async function sendBookingConfirmedEmail(booking: Booking): Promise<void> {
   const key = process.env.RESEND_API_KEY;
-  if (!key) {
+  if (!key || isDemoMode()) {
     console.warn(`[email] RESEND_API_KEY not set — skipping confirmation email for ${booking.reference}`);
     return;
   }

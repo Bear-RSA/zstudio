@@ -5,6 +5,7 @@ import { todaySA } from "@/lib/booking/dates";
 import { newsletterSchema, workshopSignupSchema } from "@/lib/booking/schema";
 import { getStore } from "@/lib/booking/store";
 import { submitBooking, type SubmitResult } from "@/lib/booking/submit";
+import { isDemoMode } from "@/lib/demo";
 
 export async function createWorkshopSignup(input: unknown): Promise<SubmitResult> {
   const parsed = workshopSignupSchema.safeParse(input);
@@ -53,7 +54,7 @@ export async function subscribeNewsletter(input: unknown): Promise<NewsletterRes
   if (parsed.data.website) return { ok: true };
 
   const key = process.env.RESEND_API_KEY;
-  if (!key) {
+  if (!key || isDemoMode()) {
     console.warn(`[newsletter] RESEND_API_KEY not set — would subscribe ${parsed.data.email}`);
     return { ok: true };
   }

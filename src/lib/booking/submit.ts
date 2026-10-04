@@ -1,6 +1,8 @@
 import "server-only";
 import { business } from "@/lib/config";
+import { isDemoMode } from "@/lib/demo";
 import { sendEnquiryEmails } from "@/lib/email/send";
+import { encodeDemoSummary } from "./demo-summary";
 import { dayCount, expandRange } from "./dates";
 import { quote } from "./pricing";
 import { generateReference } from "./reference";
@@ -8,7 +10,7 @@ import { ConflictError, DuplicateReferenceError, getStore } from "./store";
 import type { Booking, CartLine, Customer, Resource } from "./types";
 
 export type SubmitResult =
-  | { ok: true; reference: string }
+  | { ok: true; reference: string; /** DEMO_MODE only — see demo-summary.ts */ demo?: string }
   | { ok: false; error: string; conflicts?: { name: string; dates: string[] }[]; fieldErrors?: Record<string, string[]> };
 
 /** Merge duplicate lines so availability is checked against the combined qty. */
@@ -75,7 +77,7 @@ export async function submitBooking(args: {
 
     // The booking stands even if email delivery fails; Zstudio can still see it.
     await sendEnquiryEmails(booking).catch((e) => console.error("[submitBooking] email failed", e));
-    return { ok: true, reference: booking.reference };
+    return { ok: true, reference: booking.reference, ...(isDemoMode() && { demo: encodeDemoSummary(booking) }) };
   }
   return { ok: false, error: "We couldn't generate a reference. Please try again." };
 }

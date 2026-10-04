@@ -5,6 +5,8 @@ import { ResourceForm } from "@/components/admin/ResourceForm";
 import { requireAdmin } from "@/lib/admin/auth";
 
 export const metadata: Metadata = { title: "Add item" };
+// Admin pages must never be prerendered: the auth check has to run per request.
+export const dynamic = "force-dynamic";
 
 export default async function NewResourcePage() {
   await requireAdmin();

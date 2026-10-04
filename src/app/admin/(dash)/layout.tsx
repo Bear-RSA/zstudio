@@ -35,8 +35,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <div className="min-w-0 flex-1">
         {admin.devBypass && (
           <p className="border-b border-rose/40 bg-rose/10 px-4 py-2 text-xs text-rose sm:px-8">
-            Dev mode: Firebase isn&rsquo;t configured, so sign-in is skipped and data is in memory. This never happens in
-            production.
+            {admin.devBypass === "demo"
+              ? "Preview dashboard with sample data — changes aren't saved and nobody is emailed."
+              : "Dev mode: Firebase isn't configured, so sign-in is skipped and data is in memory. This never happens in production."}
           </p>
         )}
         <main className="px-4 py-8 sm:px-8 lg:py-10">{children}</main>

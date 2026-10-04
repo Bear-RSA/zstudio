@@ -65,11 +65,12 @@ export function getStore(): Promise<BookingStore> {
       return new FirestoreStore();
     }
     // ZS_ALLOW_MEMORY_STORE=1 lets a local `next build`/`next start` run without Firebase.
-    if (process.env.NODE_ENV === "production" && process.env.ZS_ALLOW_MEMORY_STORE !== "1") {
+    const { isDemoMode } = await import("@/lib/demo");
+    if (process.env.NODE_ENV === "production" && process.env.ZS_ALLOW_MEMORY_STORE !== "1" && !isDemoMode()) {
       throw new Error("Firebase is not configured. Set FIREBASE_SERVICE_ACCOUNT_JSON.");
     }
     const { MemoryStore } = await import("./store-memory");
-    console.warn("[zstudio] Firebase not configured — using in-memory store (dev only).");
+    console.warn(`[zstudio] Firebase not configured — using in-memory store (${isDemoMode() ? "DEMO_MODE preview" : "dev only"}).`);
     return new MemoryStore();
   })();
   return store;
