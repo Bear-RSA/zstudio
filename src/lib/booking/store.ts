@@ -67,7 +67,10 @@ export function getStore(): Promise<BookingStore> {
     // ZS_ALLOW_MEMORY_STORE=1 lets a local `next build`/`next start` run without Firebase.
     const { isDemoMode } = await import("@/lib/demo");
     if (process.env.NODE_ENV === "production" && process.env.ZS_ALLOW_MEMORY_STORE !== "1" && !isDemoMode()) {
-      throw new Error("Firebase is not configured. Set FIREBASE_SERVICE_ACCOUNT_JSON.");
+      throw new Error(
+        "No database configured. For a client preview, set the environment variable DEMO_MODE=1 " +
+          "(Vercel: Settings → Environment Variables, then redeploy). To go live, set FIREBASE_SERVICE_ACCOUNT_JSON.",
+      );
     }
     const { MemoryStore } = await import("./store-memory");
     console.warn(`[zstudio] Firebase not configured — using in-memory store (${isDemoMode() ? "DEMO_MODE preview" : "dev only"}).`);
