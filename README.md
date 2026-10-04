@@ -92,7 +92,7 @@ Without Firebase, `npm run dev` opens the dashboard in **dev mode**: a banner is
 1. Import the GitHub repo in Vercel. The framework (Next.js) is detected automatically, and functions run in Cape Town (`cpt1`, set in `vercel.json`).
 2. **Client preview (no Firebase yet):** set `DEMO_MODE=1` in Project → Settings → Environment Variables, then deploy. You get:
    - sample inventory;
-   - a "Preview site" banner;
+   - no banner on the public site (the dashboard shows a "Preview dashboard" note);
    - an open `/admin` with sample data;
    - no emails sent;
    - bookings that aren't saved (each serverless instance has its own memory).
