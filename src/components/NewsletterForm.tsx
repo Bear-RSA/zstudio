@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Check } from "lucide-react";
 import { useState, useTransition } from "react";
 import { subscribeNewsletter } from "@/app/(site)/community/actions";
@@ -75,7 +76,12 @@ export function NewsletterForm({ className, compact }: { className?: string; com
           {error}
         </p>
       ) : (
-        <p className="mt-2 text-xs text-muted">Workshops, open studio days and kit news. Unsubscribe any time.</p>
+        <p className="mt-2 text-xs text-muted">
+          Workshops, open studio days and kit news. Unsubscribe any time.{" "}
+          <Link href="/privacy#marketing" className="underline underline-offset-2">
+            Privacy
+          </Link>
+        </p>
       )}
     </form>
   );

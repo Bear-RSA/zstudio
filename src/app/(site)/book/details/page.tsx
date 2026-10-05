@@ -144,8 +144,16 @@ export default function DetailsPage() {
               className="mt-1 size-4 shrink-0 accent-[var(--color-rose)]"
             />
             <span>
-              I accept responsibility for hired equipment from collection to return, and understand the booking is
-              held for 48 hours pending EFT payment.
+              I accept the{" "}
+              <Link href="/terms" target="_blank" className="text-bone underline underline-offset-2">
+                terms and conditions
+              </Link>
+              , including responsibility for hired equipment from collection to return, and understand the booking is
+              held for 48 hours pending EFT payment. My details are handled under the{" "}
+              <Link href="/privacy" target="_blank" className="text-bone underline underline-offset-2">
+                privacy policy
+              </Link>
+              .
             </span>
           </label>
         </div>

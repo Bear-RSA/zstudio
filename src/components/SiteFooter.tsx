@@ -49,10 +49,13 @@ export function SiteFooter() {
           <NewsletterForm compact />
         </div>
       </div>
-      <div className="mx-auto max-w-7xl px-4 pb-8 text-xs text-muted sm:px-8">
-        © {new Date().getFullYear()} Z Studios. All prices in ZAR. ·{" "}
-        <Link href="/credits" className="link-underline">
-          Image credits
+      <div className="mx-auto flex max-w-7xl flex-wrap gap-x-6 gap-y-2 px-4 pb-8 text-xs text-muted sm:px-8">
+        <span>© {new Date().getFullYear()} Z Studios · by MiraiStack</span>
+        <Link href="/terms" className="link-underline">
+          Terms &amp; conditions
+        </Link>
+        <Link href="/privacy" className="link-underline">
+          Privacy policy (POPIA)
         </Link>
       </div>
     </footer>

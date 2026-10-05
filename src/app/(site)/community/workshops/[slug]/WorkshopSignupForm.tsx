@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -88,7 +89,17 @@ export function WorkshopSignupForm({ workshopId, price, maxSeats }: { workshopId
             onChange={(e) => setAccepted(e.target.checked)}
             className="mt-1 size-4 shrink-0 accent-[var(--color-rose)]"
           />
-          <span>I understand my seat is held for 48 hours and confirmed once my EFT payment is received.</span>
+          <span>
+            I accept the{" "}
+            <Link href="/terms#workshops" target="_blank" className="text-bone underline underline-offset-2">
+              terms
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" target="_blank" className="text-bone underline underline-offset-2">
+              privacy policy
+            </Link>
+            , and understand my seat is held for 48 hours and confirmed once my EFT payment is received.
+          </span>
         </label>
       </div>
 
