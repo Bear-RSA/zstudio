@@ -28,6 +28,9 @@
   /* Pink for text on dark photography (the home hero). */
   --color-rose-light: #f5bfd1;
   --color-danger: #c0392b;
+  /* Confirmed/paid states (admin). Readable on the light base, unlike the old pale green. */
+  --color-success: #2f7a55;
+  --color-success-soft: #e4f2ea;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: Georgia, "Times New Roman", serif;

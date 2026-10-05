@@ -10,7 +10,7 @@ export function SignOutButton() {
     <button
       type="button"
       disabled={pending}
-      className="link-underline mt-2 block text-left disabled:opacity-50"
+      className="link-underline text-left disabled:opacity-50 lg:mt-2 lg:block"
       onClick={async () => {
         setPending(true);
         await fetch("/api/admin/session", { method: "DELETE" }).catch(() => {});

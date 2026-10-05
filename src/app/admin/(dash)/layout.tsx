@@ -21,12 +21,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <p className="eyebrow lg:mt-1">Dashboard</p>
           </div>
           <AdminNav />
-          <div className="mt-auto hidden border-t border-line pt-4 text-xs text-muted lg:block">
-            <p className="truncate" title={admin.email}>
+          {/* A row under the nav on small screens, the sidebar foot on desktop: sign-out must be reachable everywhere. */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-muted lg:mt-auto lg:block lg:pt-4">
+            <p className="max-w-full truncate" title={admin.email}>
               {admin.email}
             </p>
             {!admin.devBypass && <SignOutButton />}
-            <Link href="/" className="link-underline mt-2 block">
+            <Link href="/" className="link-underline lg:mt-2 lg:block">
               View site ↗
             </Link>
           </div>

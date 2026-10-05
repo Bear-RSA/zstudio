@@ -23,9 +23,7 @@ const uses = [
 export default async function StudioPage() {
   const studio = await getStudio();
   if (!studio) notFound();
-  const [hero, ...rest] = studio.images;
-  // The detail pair: the studio's other photos first, topped up with the podcast room.
-  const details = [...rest, "/studio/podcast-room.jpg", "/equipment/rodecaster-pro.jpg"].slice(0, 2);
+  const [hero] = studio.images;
 
   return (
     <>
@@ -67,13 +65,15 @@ export default async function StudioPage() {
       </section>
 
       <section className="mx-auto mt-20 grid max-w-7xl gap-10 px-4 sm:px-8 lg:grid-cols-2">
-        <div className="grid grid-cols-2 gap-4">
-          {details.map((id) => (
-            <Reveal key={id}>
-              <Media src={id} alt="Inside Z Studios" sizes="(min-width: 1024px) 25vw, 50vw" className="aspect-[3/4]" showCredit />
-            </Reveal>
-          ))}
-        </div>
+        {/* Client photo (studio6): the green-screen room, with the white cyclorama through the opening. */}
+        <Reveal>
+          <Media
+            src="/studio/green-screen.jpg"
+            alt="The green-screen room, with the white cyclorama beyond"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="aspect-[3/2]"
+          />
+        </Reveal>
         <div>
           <p className="eyebrow">What&rsquo;s included</p>
           <ul className="mt-6 border-t border-line">

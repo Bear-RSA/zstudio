@@ -140,7 +140,8 @@ export default async function Home() {
           {spaces.map((s) => (
             <li key={s.title}>
               <Reveal>
-                <Media src={s.image} alt={s.title} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="aspect-[4/5]" />
+                {/* Landscape (3:2) photos cropped into a 4:5 card render ~1.9x the card's width, so size for that. */}
+                <Media src={s.image} alt={s.title} sizes="(min-width: 1024px) 63vw, (min-width: 640px) 94vw, 188vw" className="aspect-[4/5]" />
               </Reveal>
               <p className="mt-5 font-display text-2xl">{s.title}</p>
               <p className="mt-2 text-sm leading-relaxed text-muted">{s.body}</p>
@@ -157,7 +158,7 @@ export default async function Home() {
               <Media
                 src={studio.images[1] ?? studio.images[0]}
                 alt="The studio"
-                sizes="(min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 768px) 94vw, 188vw"
                 className="aspect-[4/5]"
                 imgClassName="card-img"
               />
@@ -181,7 +182,8 @@ export default async function Home() {
               // The lens shot is the one that survives a portrait crop.
               src={(equipment.find((e) => e.id === "sigma-24-70") ?? equipment[0])?.images[0]}
               alt="Equipment"
-              sizes="(min-width: 768px) 50vw, 100vw"
+              // Landscape photo in a 4:5 card: it renders ~1.9x the card's width.
+              sizes="(min-width: 768px) 94vw, 188vw"
               className="aspect-[4/5]"
               imgClassName="card-img"
               label="EQUIPMENT"

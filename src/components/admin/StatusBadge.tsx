@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 const styles: Record<DisplayStatus, { label: string; className: string }> = {
   awaiting: { label: "Awaiting payment", className: "border-rose/50 text-rose" },
   expired: { label: "Hold expired", className: "border-danger/50 text-danger" },
-  confirmed: { label: "Confirmed", className: "border-emerald-400/40 text-emerald-300" },
+  confirmed: { label: "Confirmed", className: "border-success/40 bg-success-soft text-success" },
   released: { label: "Released", className: "border-line-strong text-muted" },
 };
 

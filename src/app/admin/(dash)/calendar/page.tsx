@@ -98,15 +98,16 @@ export default async function AdminCalendarPage({ searchParams }: { searchParams
 
       <div className="mt-3 flex gap-4 text-xs text-muted">
         <span className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-[1px] bg-emerald-400/70" /> Confirmed
+          <span className="size-2.5 rounded-[1px] bg-success" /> Confirmed
         </span>
         <span className="flex items-center gap-1.5">
           <span className="size-2.5 rounded-[1px] border border-rose bg-rose/20" /> Awaiting payment
         </span>
       </div>
 
+      {/* All seven days fit from ~640px (laptops, tablets); only phones scroll sideways. */}
       <div className="mt-6 overflow-x-auto">
-        <div className="grid min-w-[840px] grid-cols-7 gap-px overflow-hidden border border-line bg-line">
+        <div className="grid min-w-[640px] grid-cols-7 gap-px overflow-hidden border border-line bg-line">
           {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
             <div key={d} className="bg-surface px-2 py-2 text-[11px] tracking-[0.14em] text-muted uppercase">
               {d}
@@ -116,7 +117,7 @@ export default async function AdminCalendarPage({ searchParams }: { searchParams
             const inMonth = d.startsWith(month);
             const list = byDay.get(d) ?? [];
             return (
-              <div key={d} className={cn("min-h-28 bg-ink p-1.5", !inMonth && "bg-ink/60")}>
+              <div key={d} className={cn("min-h-28 p-1.5", inMonth ? "bg-ink" : "bg-surface")}>
                 <p
                   className={cn(
                     "mb-1 px-1 text-xs tabular-nums",
@@ -135,7 +136,7 @@ export default async function AdminCalendarPage({ searchParams }: { searchParams
                           title={`${b.reference} · ${b.customer.fullName} · ${b.items.map((i) => `${i.qty}× ${i.name}`).join(", ")}`}
                           className={cn(
                             "block truncate rounded-[2px] px-1.5 py-0.5 text-[11px] leading-tight",
-                            confirmed ? "bg-emerald-400/15 text-emerald-200" : "border border-rose/50 bg-rose/10 text-rose",
+                            confirmed ? "bg-success-soft text-success" : "border border-rose/50 bg-rose/10 text-rose",
                           )}
                         >
                           {label(b)}

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CldImage } from "next-cloudinary";
 import { cn } from "@/lib/cn";
 import { imageMeta, isLocalImage } from "@/lib/images";
@@ -43,14 +44,37 @@ export function Media({
   const meta = src ? imageMeta[src] : undefined;
   const cutout = meta?.fit === "cutout";
 
+  // object-cover scales a photo past its box when the aspect ratios differ (a landscape shot in a
+  // portrait card renders ~1.9x the card's width), so `sizes` undersells it and the image upscales.
+  // Once the photo's shape is known, request the width it actually renders at.
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [coverSizes, setCoverSizes] = useState<string>();
+  const fitCover = useCallback(() => {
+    const img = imgRef.current;
+    if (!img?.naturalWidth || !img.clientWidth || !img.clientHeight) return;
+    const rendered = Math.max(img.clientWidth, (img.clientHeight * img.naturalWidth) / img.naturalHeight);
+    setCoverSizes(rendered > img.clientWidth * 1.05 ? `${Math.ceil(rendered)}px` : undefined);
+  }, []);
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!local || cutout || !img) return;
+    // A priority image can finish loading before hydration, so onLoad never fires for it.
+    if (img.complete) fitCover();
+    const observer = new ResizeObserver(fitCover);
+    observer.observe(img);
+    return () => observer.disconnect();
+  }, [local, cutout, fitCover]);
+
   return (
     <div className={cn("relative isolate overflow-hidden rounded-2xl bg-surface", className)} style={cutout ? { background: cutoutLight } : undefined}>
       {local ? (
         <Image
+          ref={imgRef}
           src={src}
           alt={alt}
           fill
-          sizes={sizes}
+          sizes={coverSizes ?? sizes}
+          onLoad={cutout ? undefined : fitCover}
           priority={priority}
           quality={quality}
           className={cn(
