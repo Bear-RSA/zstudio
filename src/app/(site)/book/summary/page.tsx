@@ -38,7 +38,7 @@ export default function SummaryPage() {
       <ul className="divide-y divide-line">
         {items.map((item) => (
           <li key={item.resourceId} className="flex gap-4 py-5">
-            <Media src={item.image} alt={item.name} sizes="64px" className="h-16 w-16 shrink-0" label=" " />
+            <Media src={item.image} alt={item.name} sizes="64px" className="h-16 w-16 shrink-0 rounded-lg" label=" " />
             <div className="min-w-0 flex-1">
               <p className="eyebrow">{item.category}</p>
               <p className="truncate text-[15px]">{item.name}</p>

@@ -1,31 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap" });
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
+// Georgia is the brand font: a system font, so there's nothing to load (see --font-display).
 
 export const metadata: Metadata = {
-  title: { default: "Z Studios — Film equipment & studio hire, Cape Town", template: "%s · Z Studios" },
+  title: { default: "Z Studios — A creative space in Woodstock, Cape Town", template: "%s · Z Studios" },
   description:
-    "Cape Town filmmaking hub. Hire cameras, lighting, backdrops and audio by the day, or book the studio for photoshoots, podcasts, music videos and headshots.",
+    "A space where dreams are nurtured. Studio hire, podcast and photography studios, video production, equipment rental and workshops in Woodstock, Cape Town.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0a09",
-  colorScheme: "dark",
+  themeColor: "#fdf9f9",
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-ZA" className={`${inter.variable} ${cormorant.variable}`} suppressHydrationWarning>
+    <html lang="en-ZA" className={`${inter.variable}`} suppressHydrationWarning>
       <body className="flex min-h-dvh flex-col">
         {/* Restores "grid already seen this session" before first paint on hard reloads (see EquipmentGrid). */}
         <script
@@ -35,7 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
         {children}
         <Toaster
-          theme="dark"
+          theme="light"
           position="bottom-center"
           toastOptions={{
             style: {

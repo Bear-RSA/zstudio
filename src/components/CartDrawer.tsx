@@ -36,7 +36,7 @@ export function CartDrawer() {
   return (
     <Drawer.Root open={open} onOpenChange={setOpen} direction={desktop ? "right" : "bottom"}>
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60" />
+        <Drawer.Overlay className="fixed inset-0 z-50 bg-bone/30" />
         <Drawer.Content
           aria-describedby={undefined}
           className={
@@ -71,7 +71,7 @@ export function CartDrawer() {
               <ul className="divide-y divide-line">
                 {items.map((item) => (
                   <li key={item.resourceId} className="flex gap-4 py-4">
-                    <Media src={item.image} alt={item.name} sizes="80px" className="h-20 w-20 shrink-0" label=" " />
+                    <Media src={item.image} alt={item.name} sizes="80px" className="h-20 w-20 shrink-0 rounded-lg" label=" " />
                     <div className="flex min-w-0 flex-1 flex-col">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">

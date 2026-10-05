@@ -9,11 +9,13 @@
  *   public/brand/logo.png      full circular logo, 1024px, transparent corners
  *   public/brand/mark.png      the spotlit "Z" only, 256px circle — for the header
  *   src/app/icon.png           favicon (the "Z" mark; "STUDIOS" is unreadable at 32px)
+ *   src/app/favicon.ico        the same mark for browsers that request /favicon.ico directly
  *   src/app/apple-icon.png     180px home-screen icon (full logo on solid black, iOS adds rounding)
  */
-import { existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
+import { toIco } from "./ico";
 
 const root = process.cwd();
 
@@ -96,11 +98,12 @@ async function main() {
     .png()
     .toFile(out("src", "app", "apple-icon.png"));
 
-  // Replace the default favicon and the temporary SVG icon so browsers pick up icon.png.
-  rmSync(out("src", "app", "favicon.ico"), { force: true });
+  // Browsers ask for /favicon.ico directly: write it from the mark rather than deleting it,
+  // or they keep showing whatever icon they cached. The temporary SVG icon goes.
+  writeFileSync(out("src", "app", "favicon.ico"), await toIco(mark));
   rmSync(out("src", "app", "icon.svg"), { force: true });
 
-  console.log("Wrote public/brand/logo.png, public/brand/mark.png, src/app/icon.png, src/app/apple-icon.png");
+  console.log("Wrote public/brand/logo.png, public/brand/mark.png, src/app/icon.png, src/app/favicon.ico, src/app/apple-icon.png");
 }
 
 main().catch((e) => {

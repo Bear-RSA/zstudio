@@ -3,7 +3,7 @@ import type { Booking } from "@/lib/booking/types";
 import { formatDisplayDate } from "@/lib/booking/dates";
 import { formatRand } from "@/lib/money";
 
-const c = { bg: "#0B0A09", surface: "#141210", line: "#2A2420", text: "#EDE6DF", muted: "#9A8F86", accent: "#C9967A" };
+const c = { bg: "#FDF9F9", surface: "#FAF0F3", line: "#F0DFE5", text: "#2B1B22", muted: "#74606A", accent: "#A8385F" };
 const label = { color: c.muted, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase" as const, margin: "0 0 4px" };
 const value = { color: c.text, fontSize: 15, margin: "0 0 16px" };
 

@@ -1,5 +1,5 @@
-<!-- Temporary favicon until `npm run logo` generates icon.png from Z Studios' real logo (it deletes this file). -->
+<!-- Temporary favicon until `npm run logo` generates icons from Z Studios' real logo. Regenerate favicon.ico and apple-icon.png from this file with `npm run favicon`. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <circle cx="32" cy="32" r="32" fill="#0b0a09"/>
-  <text x="32" y="45" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="40" fill="#f2b8a8">Z</text>
+  <circle cx="32" cy="32" r="32" fill="#0d0a0b"/>
+  <text x="32" y="45" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="40" fill="#f5bfd1">Z</text>
 </svg>

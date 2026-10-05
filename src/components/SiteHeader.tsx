@@ -36,6 +36,9 @@ export function SiteHeader({ hasMark }: { hasMark: boolean }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // On the home page the header sits over the dark hero photo until you scroll (styles: .on-dark in globals.css).
+  const onDark = pathname === "/" && !scrolled;
+
   return (
     <>
       <CartHydrator />
@@ -43,6 +46,7 @@ export function SiteHeader({ hasMark }: { hasMark: boolean }) {
         className={cn(
           "sticky top-0 z-40 border-b transition-[background-color,border-color,backdrop-filter] duration-200 ease-[ease]",
           scrolled ? "border-line bg-ink/85 backdrop-blur-md" : "border-transparent bg-transparent",
+          onDark && "on-dark",
         )}
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:h-20 sm:px-8">
@@ -68,7 +72,7 @@ export function SiteHeader({ hasMark }: { hasMark: boolean }) {
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
-              className="press flex h-10 items-center gap-2 border border-line-strong px-4 text-[12px] tracking-[0.18em] uppercase"
+              className="press flex h-10 items-center gap-2 border border-line-strong px-4 text-[12px] text-bone tracking-[0.18em] uppercase"
               aria-label={`Open hire cart, ${hydrated ? count : 0} items`}
             >
               Hire
@@ -76,7 +80,7 @@ export function SiteHeader({ hasMark }: { hasMark: boolean }) {
                 key={tickKey}
                 className={cn(
                   "flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[11px] tabular-nums",
-                  hydrated && count > 0 ? "bg-rose text-ink" : "bg-raised text-muted",
+                  hydrated && count > 0 ? "bg-pink text-bone" : "bg-raised text-muted",
                   tickKey > 0 && "tick",
                 )}
               >

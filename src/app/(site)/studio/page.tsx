@@ -24,8 +24,8 @@ export default async function StudioPage() {
   const studio = await getStudio();
   if (!studio) notFound();
   const [hero, ...rest] = studio.images;
-  // Until Zstudio's own studio photos are added, show podcast kit shots in the detail pair.
-  const details = rest.length ? rest.slice(0, 2) : ["/equipment/rodecaster-pro.jpg", "/equipment/rode-podmic.png"];
+  // The detail pair: the studio's other photos first, topped up with the podcast room.
+  const details = [...rest, "/studio/podcast-room.jpg", "/equipment/rodecaster-pro.jpg"].slice(0, 2);
 
   return (
     <>
@@ -70,7 +70,7 @@ export default async function StudioPage() {
         <div className="grid grid-cols-2 gap-4">
           {details.map((id) => (
             <Reveal key={id}>
-              <Media src={id} alt="Studio detail" sizes="(min-width: 1024px) 25vw, 50vw" className="aspect-[3/4]" showCredit />
+              <Media src={id} alt="Inside Z Studios" sizes="(min-width: 1024px) 25vw, 50vw" className="aspect-[3/4]" showCredit />
             </Reveal>
           ))}
         </div>

@@ -9,14 +9,16 @@ type SeedResource = Omit<Resource, "images"> & { images?: string[] };
 const seed: SeedResource[] = [
   {
     id: "studio-main",
+    // Z Studios' own photos (public/studio/, resized and EXIF-stripped). First is the hero.
+    images: ["/studio/cyclorama.jpg", "/studio/cyclorama-green-screen.jpg"],
     kind: "studio",
     slug: "the-studio",
     name: "The Studio",
     category: "Studio",
     description:
-      "A blacked-out, fully controllable space for photoshoots, podcasts, music videos and headshots. Booked by the full day, with house backdrops and grip included.",
+      "A fully controllable creative space in Woodstock for photoshoots, podcasts, music videos, headshots, self-tapes and content. Booked by the full day, with house backdrops and grip included.",
     specs: [
-      "Full-day hire, 08:00–20:00",
+      "Full-day hire, Monday – Saturday, 08:00–16:30",
       "Seamless paper backdrops (black, white, grey)",
       "C-stands, sandbags and grip included",
       "Blackout control, power on all walls",

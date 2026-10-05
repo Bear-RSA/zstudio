@@ -11,14 +11,14 @@ export function StudioScene({ className, priority }: { className?: string; prior
     <div
       role="img"
       aria-label="Studio set with a key light and softbox"
-      className={cn("relative overflow-hidden", className)}
+      className={cn("relative isolate overflow-hidden rounded-2xl", className)}
       style={{
         background:
-          // warm pool of light on the back wall, then the floor curve of a cyc
-          "radial-gradient(ellipse 45% 55% at 50% 42%, rgba(201,150,122,0.30), transparent 70%), linear-gradient(180deg, #16120f 0%, #0e0c0a 68%, #1a1512 69%, #0b0a09 100%)",
+          // pink wash on a white cyclorama wall, then the floor curve
+          "radial-gradient(ellipse 45% 55% at 50% 40%, rgba(245,191,209,0.20), transparent 70%), linear-gradient(180deg, #fbf3f5 0%, #f6e7ec 68%, #efdbe2 69%, #f5e6eb 100%)",
       }}
     >
-      <div className="absolute inset-x-0 bottom-0 h-[32%] bg-gradient-to-b from-transparent to-black/50" />
+      <div className="absolute inset-x-0 bottom-0 h-[32%] bg-gradient-to-b from-transparent to-rose/10" />
       <Image
         src="/equipment/light-dome.png"
         alt=""
@@ -26,7 +26,7 @@ export function StudioScene({ className, priority }: { className?: string; prior
         height={900}
         priority={priority}
         sizes="40vw"
-        className="absolute bottom-[12%] left-[0%] w-[56%] drop-shadow-[0_30px_40px_rgba(0,0,0,0.7)]"
+        className="absolute bottom-[12%] left-[0%] w-[56%] drop-shadow-[0_30px_36px_rgba(43,27,34,0.28)]"
       />
       <Image
         src="/equipment/aputure-600d-pro.png"
@@ -35,7 +35,7 @@ export function StudioScene({ className, priority }: { className?: string; prior
         height={1000}
         priority={priority}
         sizes="40vw"
-        className="absolute right-[-2%] bottom-[10%] w-[54%] -scale-x-100 drop-shadow-[0_30px_40px_rgba(0,0,0,0.7)]"
+        className="absolute right-[-2%] bottom-[10%] w-[54%] -scale-x-100 drop-shadow-[0_30px_36px_rgba(43,27,34,0.28)]"
       />
     </div>
   );

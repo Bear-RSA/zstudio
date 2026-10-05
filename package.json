@@ -13,6 +13,7 @@
     "test:emulator": "firebase emulators:exec --only firestore --project zstudio-dev \"vitest run\"",
     "assets:upload": "tsx scripts/upload-brand-assets.ts",
     "logo": "tsx scripts/make-logo.ts",
+    "favicon": "tsx scripts/make-favicon.ts",
     "admin:grant": "tsx scripts/grant-admin.ts"
   },
   "dependencies": {
