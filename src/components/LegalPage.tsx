@@ -6,19 +6,21 @@ export function LegalPage({
   title,
   intro,
   sections,
+  effectiveDate = legal.effectiveDate,
   children,
 }: {
   eyebrow: string;
   title: string;
   intro: React.ReactNode;
   sections: { id: string; title: string }[];
+  effectiveDate?: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="mx-auto max-w-3xl px-4 pt-10 sm:px-8 sm:pt-16">
       <p className="eyebrow">{eyebrow}</p>
       <h1 className="mt-3 font-display text-[clamp(36px,5vw,56px)] leading-none">{title}</h1>
-      <p className="mt-4 text-xs text-muted">Effective {legal.effectiveDate}</p>
+      <p className="mt-4 text-xs text-muted">Effective {effectiveDate}</p>
       <div className="mt-6 text-[15px] leading-relaxed text-muted">{intro}</div>
 
       <nav aria-label="Contents" className="mt-10 border-y border-line py-6">

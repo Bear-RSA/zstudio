@@ -13,6 +13,8 @@ import type { Booking } from "@/lib/booking/types";
 import type { BankDetails } from "@/lib/config";
 import { formatDisplayDate } from "@/lib/booking/dates";
 import { formatRand } from "@/lib/money";
+import { rateUnit } from "@/lib/booking/pricing";
+import { DEPOSIT_RATE } from "@/lib/booking/slots";
 
 const c = {
   bg: "#FDF9F9",
@@ -37,6 +39,8 @@ interface Props {
 export function EnquiryEmail({ booking, audience, bank, proofOfPaymentEmail, holdHours }: Props) {
   const internal = audience === "internal";
   const { customer } = booking;
+  const isSpace = Boolean(booking.slots?.length);
+  const deposit = Math.round(booking.total * DEPOSIT_RATE);
 
   return (
     <Html>
@@ -52,12 +56,22 @@ export function EnquiryEmail({ booking, audience, bank, proofOfPaymentEmail, hol
             Z STUDIOS
           </Text>
           <Heading style={{ color: c.text, fontFamily: "Georgia, serif", fontWeight: 400, fontSize: 26, margin: "24px 0 8px" }}>
-            {internal ? (booking.items.every((i) => i.kind === "workshop") ? "New workshop sign-up" : "New hire enquiry") : `Thank you, ${customer.fullName.split(" ")[0]}.`}
+            {internal
+              ? booking.items.every((i) => i.kind === "workshop")
+                ? "New workshop sign-up"
+                : booking.service
+                  ? "New production booking"
+                  : isSpace
+                    ? "New studio booking"
+                    : "New hire enquiry"
+              : `Thank you, ${customer.fullName.split(" ")[0]}.`}
           </Heading>
           <Text style={{ color: c.muted, fontSize: 14, lineHeight: "22px", margin: "0 0 24px" }}>
             {internal
               ? `Held for ${holdHours} hours pending EFT. Match the payment to the reference below.`
-              : `We're holding your booking for ${holdHours} hours. Pay by EFT using the reference below and send your proof of payment to ${proofOfPaymentEmail}.`}
+              : isSpace
+                ? `We're holding your time for ${holdHours} hours. Pay the ${DEPOSIT_RATE * 100}% deposit of ${formatRand(deposit)} by EFT using the reference below and send your proof of payment to ${proofOfPaymentEmail}. The deposit is non-refundable.`
+                : `We're holding your booking for ${holdHours} hours. Pay by EFT using the reference below and send your proof of payment to ${proofOfPaymentEmail}.`}
           </Text>
 
           <Section style={{ border: `1px solid ${c.accent}`, padding: "16px 20px", marginBottom: 24 }}>
@@ -67,20 +81,27 @@ export function EnquiryEmail({ booking, audience, bank, proofOfPaymentEmail, hol
             </Text>
           </Section>
 
-          <Text style={label}>Dates</Text>
+          <Text style={label}>{isSpace ? "Date" : "Dates"}</Text>
           <Text style={value}>
-            {formatDisplayDate(booking.startDate)} → {formatDisplayDate(booking.endDate)} ({booking.days}{" "}
-            {booking.days === 1 ? "day" : "days"})
+            {isSpace ? (
+              formatDisplayDate(booking.startDate)
+            ) : (
+              <>
+                {formatDisplayDate(booking.startDate)} → {formatDisplayDate(booking.endDate)} ({booking.days}{" "}
+                {booking.days === 1 ? "day" : "days"})
+              </>
+            )}
           </Text>
           {booking.details ? <Text style={{ ...value, marginTop: -10, color: c.muted }}>{booking.details}</Text> : null}
 
           <Text style={label}>Items</Text>
           {booking.items.map((item) => (
             <Text key={item.resourceId} style={{ ...value, margin: "0 0 6px" }}>
-              {item.qty} × {item.name}
+              {isSpace ? item.name : `${item.qty} × ${item.name}`}
               <span style={{ color: c.muted }}>
                 {" "}
-                · {formatRand(item.dailyRate)}/day · {formatRand(item.lineTotal)}
+                · {formatRand(item.dailyRate)}
+                {rateUnit(item.kind)} · {formatRand(item.lineTotal)}
               </span>
             </Text>
           ))}
@@ -88,6 +109,11 @@ export function EnquiryEmail({ booking, audience, bank, proofOfPaymentEmail, hol
           <Text style={{ ...value, fontSize: 18 }}>
             Total <span style={{ color: c.accent, float: "right" }}>{formatRand(booking.total)}</span>
           </Text>
+          {isSpace ? (
+            <Text style={{ ...value, color: c.muted, marginTop: -8 }}>
+              Deposit due ({DEPOSIT_RATE * 100}%) <span style={{ float: "right" }}>{formatRand(deposit)}</span>
+            </Text>
+          ) : null}
 
           {internal ? (
             <>

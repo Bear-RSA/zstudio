@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { requireAdmin } from "@/lib/admin/auth";
 import { displayStatus } from "@/lib/admin/data";
 import { addDays, expandRange, isIsoDate, todaySA } from "@/lib/booking/dates";
+import { publicHoliday } from "@/lib/booking/holidays";
 import { getStore } from "@/lib/booking/store";
 import type { Booking, ResourceKind } from "@/lib/booking/types";
 import { cn } from "@/lib/cn";
@@ -15,6 +16,7 @@ const kinds: { key: ResourceKind | "all"; label: string }[] = [
   { key: "all", label: "Everything" },
   { key: "equipment", label: "Equipment" },
   { key: "studio", label: "Studio" },
+  { key: "service", label: "Production" },
   { key: "workshop", label: "Workshops" },
 ];
 
@@ -37,7 +39,8 @@ function gridFor(month: string) {
 }
 
 const label = (b: Booking) =>
-  b.items.length === 1 ? `${b.items[0].qty > 1 ? `${b.items[0].qty}× ` : ""}${b.items[0].name}` : `${b.items.length} items`;
+  (b.startTime ? `${b.startTime} ` : "") +
+  (b.items.length === 1 ? `${b.items[0].qty > 1 ? `${b.items[0].qty}× ` : ""}${b.items[0].name}` : `${b.items.length} items`);
 
 export default async function AdminCalendarPage({ searchParams }: { searchParams: Promise<{ month?: string; kind?: string }> }) {
   await requireAdmin();
@@ -51,8 +54,12 @@ export default async function AdminCalendarPage({ searchParams }: { searchParams
   // Only bookings that actually block stock: confirmed, or held and not yet expired.
   const bookings = (await (await getStore()).listBookingsOverlapping(days[0], days[days.length - 1]))
     .filter((b) => ["confirmed", "awaiting"].includes(displayStatus(b, now)))
-    .filter((b) => kind === "all" || b.items.some((i) => i.kind === kind))
-    .sort((a, b) => a.startDate.localeCompare(b.startDate) || a.reference.localeCompare(b.reference));
+    // A shoot in a studio room also occupies that room, so it shows under Studio too.
+    .filter((b) => kind === "all" || b.items.some((i) => i.kind === kind) || (kind === "studio" && Boolean(b.service?.roomId)))
+    .sort(
+      (a, b) =>
+        a.startDate.localeCompare(b.startDate) || (a.startTime ?? "").localeCompare(b.startTime ?? "") || a.reference.localeCompare(b.reference),
+    );
 
   const byDay = new Map<string, Booking[]>();
   for (const b of bookings) {
@@ -116,6 +123,7 @@ export default async function AdminCalendarPage({ searchParams }: { searchParams
           {days.map((d) => {
             const inMonth = d.startsWith(month);
             const list = byDay.get(d) ?? [];
+            const holiday = publicHoliday(d);
             return (
               <div key={d} className={cn("min-h-28 p-1.5", inMonth ? "bg-ink" : "bg-surface")}>
                 <p
@@ -125,6 +133,11 @@ export default async function AdminCalendarPage({ searchParams }: { searchParams
                   )}
                 >
                   {Number(d.slice(8))}
+                  {holiday && (
+                    <span className="ml-1.5 text-[10px] tracking-wide text-rose" title="Public holiday: equipment and studios closed">
+                      {holiday}
+                    </span>
+                  )}
                 </p>
                 <ul className="space-y-1">
                   {list.slice(0, 4).map((b) => {

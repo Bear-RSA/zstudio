@@ -7,7 +7,12 @@ import { blockedDateId, type Resource } from "./types";
 import type { CartItem } from "@/stores/cart";
 
 export const listEquipment = cache(async () => (await getStore()).listResources("equipment"));
-export const getStudio = cache(async () => (await (await getStore()).listResources("studio"))[0] ?? null);
+/** The bookable studio spaces, booked by the half hour. */
+export const listSpaces = cache(async () => (await getStore()).listResources("studio"));
+/** Bookable production services (the production team has no packages, so it isn't listed). */
+export const listServices = cache(async () =>
+  (await (await getStore()).listResources("service")).filter((r) => r.packages?.length),
+);
 export const getBySlug = cache(async (slug: string) => (await getStore()).getResourceBySlug(slug));
 
 export type Workshop = Resource & { date: string; seatsLeft: number };

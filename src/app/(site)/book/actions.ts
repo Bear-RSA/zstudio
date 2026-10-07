@@ -4,6 +4,7 @@ import { z } from "zod";
 import { findConflicts } from "@/lib/booking/availability";
 import { addDays, dayCount, expandRange, todaySA } from "@/lib/booking/dates";
 import { cartLineSchema, enquirySchema, MAX_RANGE_DAYS, MAX_WRITES } from "@/lib/booking/schema";
+import { isBusinessDay } from "@/lib/booking/holidays";
 import { getStore } from "@/lib/booking/store";
 import { normalise, submitBooking, type SubmitResult } from "@/lib/booking/submit";
 import type { CartLine } from "@/lib/booking/types";
@@ -49,14 +50,17 @@ export async function createEnquiry(input: unknown): Promise<EnquiryResult> {
 
   if (startDate < todaySA()) return { ok: false, error: "The start date has already passed." };
   if (endDate < startDate) return { ok: false, error: "The return date is before the collection date." };
+  if (!isBusinessDay(startDate) || !isBusinessDay(endDate)) {
+    return { ok: false, error: "Gear is collected and returned on weekdays only, not on weekends or public holidays." };
+  }
   const days = dayCount(startDate, endDate);
   if (days > MAX_RANGE_DAYS) return { ok: false, error: `Bookings can be at most ${MAX_RANGE_DAYS} days.` };
   if (days * lines.length > MAX_WRITES) return { ok: false, error: "That booking is too large — please call us." };
 
   const store = await getStore();
   const resources = await store.getResources(lines.map((l) => l.resourceId));
-  // Workshops have fixed dates and their own sign-up flow; they can't ride along in the cart.
-  if (resources.size !== lines.length || [...resources.values()].some((r) => r.kind === "workshop")) {
+  // Workshops and studio spaces have their own booking flows; only equipment rides in the cart.
+  if (resources.size !== lines.length || [...resources.values()].some((r) => r.kind !== "equipment")) {
     return { ok: false, error: "An item in your cart is no longer available." };
   }
 

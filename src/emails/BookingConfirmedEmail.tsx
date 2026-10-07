@@ -29,7 +29,7 @@ export function BookingConfirmedEmail({ booking, contactEmail }: { booking: Book
             You&rsquo;re booked, {first}.
           </Heading>
           <Text style={{ color: c.muted, fontSize: 14, lineHeight: "22px", margin: "0 0 24px" }}>
-            We&rsquo;ve received your payment of {formatRand(booking.total)}.{" "}
+            {booking.slots?.length ? "We’ve received your deposit." : `We’ve received your payment of ${formatRand(booking.total)}.`}{" "}
             {workshop ? "Your seat is confirmed — see you there." : "Your booking is confirmed and the dates are yours."}
           </Text>
 
@@ -47,7 +47,7 @@ export function BookingConfirmedEmail({ booking, contactEmail }: { booking: Book
           <Text style={label}>{workshop ? "Workshop" : "Booked"}</Text>
           {booking.items.map((i) => (
             <Text key={i.resourceId} style={{ ...value, margin: "0 0 6px" }}>
-              {i.qty} × {i.name}
+              {booking.slots?.length ? i.name : `${i.qty} × ${i.name}`}
             </Text>
           ))}
           <Hr style={{ borderColor: c.line, margin: "16px 0" }} />

@@ -1,9 +1,8 @@
 import "server-only";
 import { findConflicts } from "./availability";
-import { expandRange } from "./dates";
 import { seedResources } from "./seed-data";
 import { BookingStateError, ConflictError, DuplicateReferenceError, SlugTakenError, type BookingStore } from "./store";
-import { blockedDateId, type BlockedDate, type Booking, type CartLine, type Resource } from "./types";
+import { blockedDateId, holdLines, holdUnits, type BlockedDate, type Booking, type CartLine, type Resource } from "./types";
 
 export interface MemoryDb {
   resources: Map<string, Resource>;
@@ -23,7 +22,6 @@ if (g.__zsMemory && !g.__zsMemory.resources) g.__zsMemory = undefined; // shape 
 const shared = (g.__zsMemory ??= freshMemoryDb());
 
 const clone = <T,>(v: T): T => structuredClone(v);
-const linesOf = (b: Booking): CartLine[] => b.items.map((i) => ({ resourceId: i.resourceId, qty: i.qty }));
 
 // Every method is synchronous between its reads and writes (single Node process), so each is atomic.
 export class MemoryStore implements BookingStore {
@@ -106,8 +104,8 @@ export class MemoryStore implements BookingStore {
     if (!booking) throw new BookingStateError("Booking not found.");
     if (booking.status !== "held") throw new BookingStateError(`This booking is already ${booking.status}.`);
 
-    const dates = expandRange(booking.startDate, booking.endDate);
-    const lines = linesOf(booking);
+    const dates = holdUnits(booking);
+    const lines = holdLines(booking);
     // The hold may have expired and the stock been taken since: check, ignoring our own hold.
     const stock = Object.fromEntries(lines.map((l) => [l.resourceId, this.db.resources.get(l.resourceId)?.stock ?? 0]));
     const conflicts = findConflicts(lines, dates, stock, this.db.blocked, now, reference);
@@ -130,8 +128,8 @@ export class MemoryStore implements BookingStore {
     if (!booking) throw new BookingStateError("Booking not found.");
     if (booking.status === "released") throw new BookingStateError("This booking is already released.");
 
-    for (const line of linesOf(booking)) {
-      for (const date of expandRange(booking.startDate, booking.endDate)) {
+    for (const line of holdLines(booking)) {
+      for (const date of holdUnits(booking)) {
         delete this.db.blocked.get(blockedDateId(line.resourceId, date))?.holds[reference];
       }
     }

@@ -1,25 +1,35 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BookingsTable } from "@/components/admin/BookingsTable";
+import { StudioSchedule } from "@/components/admin/StudioSchedule";
 import { requireAdmin } from "@/lib/admin/auth";
-import { getOverview } from "@/lib/admin/data";
-import { formatDisplayDate, todaySA } from "@/lib/booking/dates";
+import { getOverview, getStudioSchedule } from "@/lib/admin/data";
+import { addDays, formatDisplayDate, isIsoDate, todaySA } from "@/lib/booking/dates";
 import { formatRand } from "@/lib/money";
+import { CLOSE, isOpenDay, OPEN } from "@/lib/booking/slots";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export const metadata: Metadata = { title: "Overview" };
 export const dynamic = "force-dynamic";
 
-export default async function AdminOverviewPage() {
+/** Half-hours as hours: 7 → "3½h", 1 → "½h". */
+const hours = (slots: number) => `${Math.floor(slots / 2) || (slots % 2 ? "" : 0)}${slots % 2 ? "½" : ""}h`;
+
+export default async function AdminOverviewPage({ searchParams }: { searchParams: Promise<{ day?: string }> }) {
   await requireAdmin();
-  const o = await getOverview();
+  const today = todaySA();
+  // The schedule can step through days (?day=YYYY-MM-DD); everything else is about today.
+  const sp = await searchParams;
+  const day = sp.day && isIsoDate(sp.day) ? sp.day : today;
+  const [o, schedule] = await Promise.all([getOverview(), day === today ? null : getStudioSchedule(day)]);
 
   const stats = [
     { label: "Awaiting payment", value: String(o.awaiting.length), sub: o.awaiting.length ? formatRand(o.awaitingTotal) : "All settled" },
     { label: "Gear out today", value: `${o.unitsOutToday} / ${o.unitsTotal}`, sub: "units hired or held" },
     {
       label: "Studio today",
-      value: o.studioToday ? (o.studioToday.confirmedToday ? "Booked" : o.studioToday.heldToday ? "Held" : "Free") : "—",
-      sub: o.studioToday?.heldToday ? "awaiting payment" : " ",
+      value: o.studioToday.capacity ? `${hours(o.studioToday.booked + o.studioToday.held)} / ${hours(o.studioToday.capacity)}` : "Closed",
+      sub: o.studioToday.held ? `${hours(o.studioToday.held)} awaiting payment` : "room hours booked",
     },
     { label: "Expired holds", value: String(o.expiredCount), sub: o.expiredCount ? "no longer blocking stock" : "None" },
   ];
@@ -38,6 +48,36 @@ export default async function AdminOverviewPage() {
           </div>
         ))}
       </dl>
+
+      <section className="mt-12">
+        <div className="flex items-baseline justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <h2 className="font-display text-2xl">{day === today ? "Today in the studio" : `In the studio · ${formatDisplayDate(day)}`}</h2>
+            <Link href={{ query: { day: addDays(day, -1) } }} scroll={false} className="press p-1.5 text-rose" aria-label="Previous day">
+              <ChevronLeft size={18} />
+            </Link>
+            <Link href={{ query: { day: addDays(day, 1) } }} scroll={false} className="press p-1.5 text-rose" aria-label="Next day">
+              <ChevronRight size={18} />
+            </Link>
+            {day !== today && (
+              <Link href="/admin" scroll={false} className="link-underline text-sm text-muted">
+                Today
+              </Link>
+            )}
+          </div>
+          <Link href="/admin/calendar?kind=studio" className="link-underline text-sm text-muted">
+            Calendar
+          </Link>
+        </div>
+        <p className="mt-1 text-sm text-muted">
+          {isOpenDay(day)
+            ? `Every room and the production team, ${OPEN}–${CLOSE}. Green is paid; pink is awaiting payment.`
+            : "Closed (Sunday or a public holiday)."}
+        </p>
+        <div className="mt-4">
+          <StudioSchedule rows={schedule ?? o.schedule} />
+        </div>
+      </section>
 
       <section className="mt-12">
         <div className="flex items-baseline justify-between gap-4">

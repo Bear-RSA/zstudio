@@ -25,8 +25,6 @@
   --color-rose: #a8385f;
   --color-rose-bright: #8f2c50;
   --color-rose-deep: #6e2140;
-  /* Pink for text on dark photography (the home hero). */
-  --color-rose-light: #f5bfd1;
   --color-danger: #c0392b;
   /* Confirmed/paid states (admin). Readable on the light base, unlike the old pale green. */
   --color-success: #2f7a55;
@@ -79,15 +77,6 @@
   font-family: var(--font-sans);
   font-weight: 300;
   letter-spacing: -0.01em;
-}
-
-/* Header over the home hero photo: swap the text and line tokens to light ones. */
-.on-dark {
-  --color-bone: #ffffff;
-  --color-muted: rgb(255 255 255 / 0.72);
-  --color-line: rgb(255 255 255 / 0.14);
-  --color-line-strong: rgb(255 255 255 / 0.3);
-  --color-raised: rgb(255 255 255 / 0.12);
 }
 
 @layer components {
@@ -199,20 +188,6 @@
   /* Returning to the grid in the same session: no entrance, cards are just there. */
   html[data-grid-seen] .stagger-once > * {
     animation: none;
-  }
-
-  .grain::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.07;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-    mix-blend-mode: overlay;
-  }
-  /* Grain that fades out at the bottom, where the hero's dark bleeds onto the page. */
-  .grain-fade::after {
-    mask-image: linear-gradient(to bottom, black 30%, transparent 70%);
   }
 
   /* Morphing button label crossfade, blur bridges the two states. */
@@ -354,6 +329,12 @@
 }
 .zs-calendar .rdp-disabled:not(.rdp-outside) .rdp-day_button {
   color: color-mix(in srgb, var(--color-muted) 45%, transparent);
+}
+/* Weekends and public holidays: no equipment collections or returns. */
+.zs-calendar .zs-closed:not(.rdp-outside) .rdp-day_button {
+  background: color-mix(in srgb, var(--color-muted) 14%, transparent);
+  color: color-mix(in srgb, var(--color-muted) 55%, transparent);
+  cursor: not-allowed;
 }
 .zs-calendar .zs-booked .rdp-day_button {
   text-decoration: line-through;

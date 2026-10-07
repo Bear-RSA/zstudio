@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CldImage } from "next-cloudinary";
 import { cn } from "@/lib/cn";
-import { imageMeta, isLocalImage } from "@/lib/images";
+import { getImageMeta, isLocalImage } from "@/lib/images";
 
 interface Props {
   /** A local path (/equipment/…) or a Cloudinary public ID. When missing, a branded frame is shown. */
@@ -41,8 +41,11 @@ export function Media({
   quality = 85,
 }: Props) {
   const local = src && isLocalImage(src);
-  const meta = src ? imageMeta[src] : undefined;
+  const meta = src ? getImageMeta(src) : undefined;
   const cutout = meta?.fit === "cutout";
+  // Product shots come on their own white backdrop: contain them on a matching white panel.
+  const product = meta?.fit === "product";
+  const contained = cutout || product;
 
   // object-cover scales a photo past its box when the aspect ratios differ (a landscape shot in a
   // portrait card renders ~1.9x the card's width), so `sizes` undersells it and the image upscales.
@@ -57,16 +60,16 @@ export function Media({
   }, []);
   useEffect(() => {
     const img = imgRef.current;
-    if (!local || cutout || !img) return;
+    if (!local || contained || !img) return;
     // A priority image can finish loading before hydration, so onLoad never fires for it.
     if (img.complete) fitCover();
     const observer = new ResizeObserver(fitCover);
     observer.observe(img);
     return () => observer.disconnect();
-  }, [local, cutout, fitCover]);
+  }, [local, contained, fitCover]);
 
   return (
-    <div className={cn("relative isolate overflow-hidden rounded-2xl bg-surface", className)} style={cutout ? { background: cutoutLight } : undefined}>
+    <div className={cn("relative isolate overflow-hidden rounded-2xl bg-surface", className)} style={cutout ? { background: cutoutLight } : product ? { background: "#fff" } : undefined}>
       {local ? (
         <Image
           ref={imgRef}
@@ -74,11 +77,16 @@ export function Media({
           alt={alt}
           fill
           sizes={coverSizes ?? sizes}
-          onLoad={cutout ? undefined : fitCover}
+          onLoad={contained ? undefined : fitCover}
           priority={priority}
-          quality={quality}
+          // Product shots are fine detail (lettering, grilles) on flat white: keep them crisp.
+          quality={product ? 92 : quality}
           className={cn(
-            cutout ? "object-contain p-[12%] drop-shadow-[0_24px_28px_rgba(43,27,34,0.22)]" : "object-cover",
+            cutout
+              ? "object-contain p-[12%] drop-shadow-[0_24px_28px_rgba(43,27,34,0.22)]"
+              : product
+                ? "object-contain p-[10%]"
+                : "object-cover",
             imgClassName,
           )}
         />

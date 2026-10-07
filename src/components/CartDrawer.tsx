@@ -57,13 +57,13 @@ export function CartDrawer() {
             {!hydrated || items.length === 0 ? (
               <div className="py-16 text-center">
                 <p className="font-display text-xl text-bone">Nothing here yet.</p>
-                <p className="mt-2 text-sm text-muted">Add gear or the studio to start a booking.</p>
+                <p className="mt-2 text-sm text-muted">Add gear to start a booking, or book a studio space.</p>
                 <div className="mt-8 flex flex-col gap-3">
                   <Link href="/equipment" className="btn-ghost" onClick={() => setOpen(false)}>
                     Browse equipment
                   </Link>
                   <Link href="/studio" className="btn-ghost" onClick={() => setOpen(false)}>
-                    Book the studio
+                    Book a studio space
                   </Link>
                 </div>
               </div>
@@ -97,7 +97,7 @@ export function CartDrawer() {
                             className="h-8"
                           />
                         ) : (
-                          <span className="text-xs text-muted">{item.kind === "studio" ? "Full day" : "×1"}</span>
+                          <span className="text-xs text-muted">×1</span>
                         )}
                         <span className="text-sm text-muted tabular-nums">{formatRand(item.dailyRate * item.qty)}/day</span>
                       </div>

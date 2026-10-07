@@ -7,7 +7,7 @@ const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use 24h time, e.g. 0
 export const resourceInputSchema = z
   .object({
     id: z.string().optional(),
-    kind: z.enum(["equipment", "studio", "workshop"]),
+    kind: z.enum(["equipment", "studio", "workshop", "service"]),
     name: z.string().trim().min(2, "Name is required").max(120),
     slug: z
       .string()
@@ -25,6 +25,21 @@ export const resourceInputSchema = z
     startTime: z.string().optional(),
     endTime: z.string().optional(),
     host: z.string().trim().max(120).optional(),
+    minSlots: z.number().int().min(1).max(16).optional(),
+    packages: z
+      .array(
+        z.object({
+          id: z.string().regex(/^[a-z0-9-]+$/),
+          label: z.string().trim().min(1).max(80),
+          slots: z.number().int().min(1).max(17),
+          price: z.number().int().min(0).max(1_000_000),
+          location: z.enum(["studio", "outdoor"]),
+          perPerson: z.boolean().optional(),
+        }),
+      )
+      .max(10)
+      .optional(),
+    rooms: z.array(z.string().trim().min(1).max(100)).max(10).optional(),
   })
   .superRefine((r, ctx) => {
     if (r.kind !== "workshop") return;

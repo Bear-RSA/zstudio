@@ -86,8 +86,10 @@ export async function saveResourceAction(input: unknown): Promise<ActionResult &
     ...data,
     id,
     stock: data.kind === "studio" ? 1 : data.stock,
-    // Workshop-only fields are dropped for gear and the studio.
+    // Workshop-only fields are dropped for gear and spaces; the minimum booking only applies to spaces.
     ...(data.kind === "workshop" ? {} : { date: undefined, startTime: undefined, endTime: undefined, host: undefined }),
+    ...(data.kind === "studio" ? {} : { minSlots: undefined }),
+    ...(data.kind === "service" ? {} : { packages: undefined, rooms: undefined }),
   };
 
   try {

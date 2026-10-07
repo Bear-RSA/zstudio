@@ -10,6 +10,7 @@ import { formatDisplayDate } from "@/lib/booking/dates";
 import { REFERENCE_PATTERN } from "@/lib/booking/reference";
 import { getStore } from "@/lib/booking/store";
 import { formatRand } from "@/lib/money";
+import { DEPOSIT_RATE, formatDuration } from "@/lib/booking/slots";
 
 export const dynamic = "force-dynamic";
 
@@ -38,8 +39,25 @@ export default async function AdminBookingPage({ params }: Props) {
       "Dates",
       b.startDate === b.endDate ? formatDisplayDate(b.startDate) : `${formatDisplayDate(b.startDate)} → ${formatDisplayDate(b.endDate)}`,
     ],
-    ...(b.details ? ([["Details", b.details]] as [string, string][]) : []),
-    ["Days", String(b.days)],
+    ...(b.startTime && b.endTime && b.slots?.length
+      ? ([
+          ["Time", `${b.startTime} – ${b.endTime}`],
+          ["Length", formatDuration(b.slots.length)],
+        ] as [string, string][])
+      : ([["Days", String(b.days)]] as [string, string][])),
+    ...(b.service
+      ? ([
+          ["Type", "Production service"],
+          ["Package", b.service.packageLabel],
+          ["Where", b.service.location === "outdoor" ? "On location (outdoor)" : (b.service.roomName ?? "Studio")],
+          ...(b.service.people > 1 ? [["People", String(b.service.people)]] : []),
+          ["Holds", [b.service.roomName, "Production team"].filter(Boolean).join(" + ")],
+        ] as [string, string][])
+      : b.slots?.length
+        ? ([["Type", "Studio hire"]] as [string, string][])
+        : []),
+    ...(b.details && !b.slots?.length ? ([["Details", b.details]] as [string, string][]) : []),
+    ...(b.slots?.length ? ([["Deposit due (50%)", formatRand(Math.round(b.total * DEPOSIT_RATE))]] as [string, string][]) : []),
     ["Enquiry received", when(b.createdAt)],
     ["Hold expires", b.status === "held" ? when(b.expiresAt) : "—"],
     ["Confirmed", when(b.confirmedAt)],
@@ -115,7 +133,11 @@ export default async function AdminBookingPage({ params }: Props) {
                   {i.qty} × {i.name}
                 </td>
                 <td className="py-2 text-right text-muted tabular-nums">
-                  {formatRand(i.dailyRate)} × {i.qty} × {b.days}
+                  {b.service
+                    ? `${formatRand(i.dailyRate)} × ${i.qty} ${i.qty === 1 ? "booking" : "people"}`
+                    : b.slots?.length
+                      ? `${formatRand(i.dailyRate)} × ${b.slots.length} half-hours`
+                      : `${formatRand(i.dailyRate)} × ${i.qty} × ${b.days}`}
                 </td>
                 <td className="py-2 pl-6 text-right tabular-nums">{formatRand(i.lineTotal)}</td>
               </tr>

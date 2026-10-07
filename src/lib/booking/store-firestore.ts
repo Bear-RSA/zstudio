@@ -2,9 +2,8 @@ import "server-only";
 import { FieldValue, Timestamp, type DocumentData, type Firestore } from "firebase-admin/firestore";
 import { db } from "@/lib/firebase/admin";
 import { findConflicts } from "./availability";
-import { expandRange } from "./dates";
 import { BookingStateError, ConflictError, DuplicateReferenceError, SlugTakenError, type BookingStore } from "./store";
-import { blockedDateId, type BlockedDate, type Booking, type CartLine, type Hold, type Resource } from "./types";
+import { blockedDateId, holdLines, holdUnits, type BlockedDate, type Booking, type CartLine, type Hold, type Resource } from "./types";
 
 // Firestore stores expiresAt as a Timestamp; the engine works in epoch ms.
 function toBlockedDate(data: DocumentData): BlockedDate {
@@ -163,8 +162,8 @@ export class FirestoreStore implements BookingStore {
       const booking = toBooking(snap.data()!);
       if (booking.status !== "held") throw new BookingStateError(`This booking is already ${booking.status}.`);
 
-      const dates = expandRange(booking.startDate, booking.endDate);
-      const lines = booking.items.map((i) => ({ resourceId: i.resourceId, qty: i.qty }));
+      const dates = holdUnits(booking);
+      const lines = holdLines(booking);
       const blockedCol = this.fs.collection("blockedDates");
       const ids = lines.flatMap((l) => dates.map((d) => blockedDateId(l.resourceId, d)));
       const snaps = await tx.getAll(
@@ -202,8 +201,8 @@ export class FirestoreStore implements BookingStore {
       if (booking.status === "released") throw new BookingStateError("This booking is already released.");
 
       const blockedCol = this.fs.collection("blockedDates");
-      for (const item of booking.items) {
-        for (const date of expandRange(booking.startDate, booking.endDate)) {
+      for (const item of holdLines(booking)) {
+        for (const date of holdUnits(booking)) {
           // Nested-object merge, not a dotted path: references contain hyphens.
           tx.set(blockedCol.doc(blockedDateId(item.resourceId, date)), { holds: { [reference]: FieldValue.delete() } }, { merge: true });
         }

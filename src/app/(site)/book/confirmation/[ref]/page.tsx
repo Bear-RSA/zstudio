@@ -5,7 +5,9 @@ import { getStore } from "@/lib/booking/store";
 import { isDemoMode } from "@/lib/demo";
 import { REFERENCE_PATTERN } from "@/lib/booking/reference";
 import { formatDisplayDate } from "@/lib/booking/dates";
+import { nextBusinessDay } from "@/lib/booking/holidays";
 import { formatRand } from "@/lib/money";
+import { DEPOSIT_RATE } from "@/lib/booking/slots";
 import { ClearCart, CopyButton } from "./client";
 
 export const dynamic = "force-dynamic";
@@ -43,19 +45,24 @@ export default async function ConfirmationPage({
   ];
 
   const isWorkshop = booking.items.every((i) => i.kind === "workshop");
+  // Studio spaces: a 50% non-refundable deposit secures the time.
+  const isSpace = Boolean(booking.slots?.length);
+  const due = isSpace ? Math.round(booking.total * DEPOSIT_RATE) : booking.total;
 
   // No customer PII here — the reference is all that's in the URL.
   return (
     <div className="stagger mx-auto max-w-2xl [--stagger-step:60ms]">
-      {/* A workshop sign-up never touched the gear cart, so leave it alone. */}
-      {!isWorkshop && <ClearCart />}
+      {/* Workshop and studio bookings never touched the gear cart, so leave it alone. */}
+      {!isWorkshop && !isSpace && <ClearCart />}
       <p className="eyebrow text-rose!">{isWorkshop ? "Seat reserved" : "Enquiry received"}</p>
       <h1 style={{ ["--i" as string]: 1 }} className="mt-3 font-display text-[clamp(36px,6vw,60px)] leading-[1.05]">
         {isWorkshop ? "See you there." : <>You&rsquo;re pencilled in.</>}
       </h1>
       <p style={{ ["--i" as string]: 2 }} className="mt-4 text-[15px] leading-relaxed text-muted">
         We&rsquo;ve emailed you a copy. Pay by EFT using your reference below, then send proof of payment and
-        we&rsquo;ll confirm your booking. Your {isWorkshop ? "seat is" : "dates are"} held until <span className="text-bone">{expires}</span>.
+        we&rsquo;ll confirm your booking. Your {isWorkshop ? "seat is" : isSpace ? "time is" : "dates are"} held until{" "}
+        <span className="text-bone">{expires}</span>.
+        {isSpace && " The deposit is non-refundable; the balance is due before your session."}
       </p>
 
       <div style={{ ["--i" as string]: 3 }} className="mt-10 border border-rose p-6 sm:p-8">
@@ -65,9 +72,15 @@ export default async function ConfirmationPage({
           <CopyButton value={booking.reference} />
         </div>
         <div className="mt-6 flex items-baseline justify-between border-t border-line pt-4">
-          <span className="text-sm text-muted">Amount due</span>
-          <span className="font-display text-3xl tabular-nums">{formatRand(booking.total)}</span>
+          <span className="text-sm text-muted">{isSpace ? `Deposit due (${DEPOSIT_RATE * 100}%)` : "Amount due"}</span>
+          <span className="font-display text-3xl tabular-nums">{formatRand(due)}</span>
         </div>
+        {isSpace && (
+          <div className="mt-2 flex items-baseline justify-between text-sm text-muted">
+            <span>Booking total</span>
+            <span className="tabular-nums">{formatRand(booking.total)}</span>
+          </div>
+        )}
       </div>
 
       <section style={{ ["--i" as string]: 4 }} className="mt-10">
@@ -105,15 +118,16 @@ export default async function ConfirmationPage({
         <p className="mt-3 text-[15px]">
           {formatDisplayDate(booking.startDate)}
           {booking.endDate !== booking.startDate && <> → {formatDisplayDate(booking.endDate)}</>}
-          {!isWorkshop && ` · ${booking.days} ${booking.days === 1 ? "day" : "days"}`}
+          {!isWorkshop && !isSpace && ` · ${booking.days} ${booking.days === 1 ? "day" : "days"}`}
         </p>
+        {!isWorkshop && !isSpace && (
+          <p className="mt-1 text-sm text-muted">Return by {formatDisplayDate(nextBusinessDay(booking.endDate))}</p>
+        )}
         {booking.details && <p className="mt-1 text-sm text-muted">{booking.details}</p>}
         <ul className="mt-3 space-y-1 text-sm text-muted">
           {booking.items.map((i) => (
             <li key={i.resourceId} className="flex justify-between gap-4">
-              <span>
-                {i.qty} × {i.name}
-              </span>
+              <span>{isSpace ? i.name : `${i.qty} × ${i.name}`}</span>
               <span className="tabular-nums">{formatRand(i.lineTotal)}</span>
             </li>
           ))}

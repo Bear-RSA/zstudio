@@ -6,15 +6,23 @@ import { formatDayMonth, formatDisplayDate } from "@/lib/booking/dates";
 import type { Booking } from "@/lib/booking/types";
 import { formatRand } from "@/lib/money";
 
+const time = (b: Booking) => (b.startTime && b.endTime ? ` · ${b.startTime}–${b.endTime}` : "");
+
 const dateRange = (b: Booking) =>
-  b.startDate === b.endDate ? formatDisplayDate(b.startDate) : `${formatDisplayDate(b.startDate)} → ${formatDisplayDate(b.endDate)}`;
+  (b.startDate === b.endDate ? formatDisplayDate(b.startDate) : `${formatDisplayDate(b.startDate)} → ${formatDisplayDate(b.endDate)}`) + time(b);
 
 // "12 Oct → 14 Oct": the full dates are on the booking page; the list only needs to be scannable.
 const shortRange = (b: Booking) =>
-  b.startDate === b.endDate ? formatDayMonth(b.startDate) : `${formatDayMonth(b.startDate)} → ${formatDayMonth(b.endDate)}`;
+  (b.startDate === b.endDate ? formatDayMonth(b.startDate) : `${formatDayMonth(b.startDate)} → ${formatDayMonth(b.endDate)}`) + time(b);
 
 const summary = (b: Booking) =>
-  b.items.length === 1 ? `${b.items[0].qty} × ${b.items[0].name}` : `${b.items.length} items · ${b.items.map((i) => i.name).join(", ")}`;
+  b.service
+    ? `${b.items[0].name}${b.service.people > 1 ? ` × ${b.service.people}` : ""} · ${b.service.roomName ?? "On location"}`
+    : b.slots?.length
+      ? `${b.items[0].name} hire`
+      : b.items.length === 1
+        ? `${b.items[0].qty} × ${b.items[0].name}`
+        : `${b.items.length} items · ${b.items.map((i) => i.name).join(", ")}`;
 
 /**
  * Cards below xl (laptops, tablets, phones), a table from xl up — so the status and

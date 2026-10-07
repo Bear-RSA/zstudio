@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useCartGuard } from "../useCartGuard";
-import { dayCount, formatDisplayDate } from "@/lib/booking/dates";
+import { formatDisplayDate } from "@/lib/booking/dates";
+import { billableDays, nextBusinessDay } from "@/lib/booking/holidays";
 import { useCart } from "@/stores/cart";
 import { formatRand } from "@/lib/money";
 import { Media } from "@/components/Media";
@@ -15,7 +16,7 @@ export default function SummaryPage() {
 
   if (!ready || !startDate || !endDate) return <div className="h-96" />;
 
-  const days = dayCount(startDate, endDate);
+  const days = billableDays(startDate, endDate);
   const total = items.reduce((s, i) => s + i.dailyRate * i.qty * days, 0);
 
   return (
@@ -26,6 +27,7 @@ export default function SummaryPage() {
         <p className="text-[15px]">
           {formatDisplayDate(startDate)}
           {endDate !== startDate && <> → {formatDisplayDate(endDate)}</>}
+          <span className="block text-sm text-muted">Return by {formatDisplayDate(nextBusinessDay(endDate))}</span>
         </p>
         <p className="text-sm text-muted">
           {days} {days === 1 ? "day" : "days"} ·{" "}

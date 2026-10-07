@@ -15,8 +15,8 @@ export default async function EquipmentPage() {
       <p className="eyebrow">Equipment hire</p>
       <h1 className="mt-3 font-display text-[clamp(40px,6vw,72px)] leading-none">The Kit Room</h1>
       <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-muted">
-        Everything is charged per day, collection to return. Add what you need, then pick your dates — the calendar
-        only offers days the whole kit is free.
+        Gear is collected and returned Monday to Friday, and weekends and public holidays aren&rsquo;t charged. Add what you need, then pick your dates: the calendar
+        only offers days the whole kit is free. Rates exclude VAT and insurance.
       </p>
       <EquipmentGrid
         items={equipment.map((r) => ({ ...toCartItem(r), description: r.description }))}

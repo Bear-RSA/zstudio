@@ -9,7 +9,8 @@ import { toast } from "sonner";
 import { createEnquiry } from "../actions";
 import { useCartGuard } from "../useCartGuard";
 import { customerSchema, type CustomerInput } from "@/lib/booking/schema";
-import { dayCount, formatDisplayDate } from "@/lib/booking/dates";
+import { formatDisplayDate } from "@/lib/booking/dates";
+import { billableDays } from "@/lib/booking/holidays";
 import { useCart } from "@/stores/cart";
 import { formatRand } from "@/lib/money";
 import { cn } from "@/lib/cn";
@@ -49,7 +50,7 @@ export default function DetailsPage() {
 
   if (!ready || !startDate || !endDate) return <div className="h-96" />;
 
-  const days = dayCount(startDate, endDate);
+  const days = billableDays(startDate, endDate);
   const total = items.reduce((s, i) => s + i.dailyRate * i.qty * days, 0);
 
   const onSubmit = (customer: CustomerInput) => {

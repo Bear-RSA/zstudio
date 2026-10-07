@@ -12,7 +12,7 @@ const summarySchema = z.object({
     .array(
       z.object({
         resourceId: z.string().max(100),
-        kind: z.enum(["equipment", "studio", "workshop"]),
+        kind: z.enum(["equipment", "studio", "workshop", "service"]),
         name: z.string().max(120),
         qty: z.number().int().min(1).max(50),
         dailyRate: z.number().int().min(0),
@@ -25,13 +25,28 @@ const summarySchema = z.object({
   days: z.number().int().min(1).max(366),
   total: z.number().int().min(0),
   details: z.string().max(200).optional(),
+  slots: z.array(z.string().max(16)).max(24).optional(),
+  service: z
+    .object({
+      packageId: z.string().max(60),
+      packageLabel: z.string().max(80),
+      location: z.enum(["studio", "outdoor"]),
+      roomId: z.string().max(100).optional(),
+      roomName: z.string().max(120).optional(),
+      people: z.number().int().min(1).max(20),
+    })
+    .optional(),
+  startTime: z.string().max(5).optional(),
+  endTime: z.string().max(5).optional(),
   createdAt: z.number(),
   expiresAt: z.number(),
 });
 
 export function encodeDemoSummary(b: Booking): string {
-  const { reference, items, startDate, endDate, days, total, details, createdAt, expiresAt } = b;
-  return Buffer.from(JSON.stringify({ reference, items, startDate, endDate, days, total, details, createdAt, expiresAt })).toString(
+  const { reference, items, startDate, endDate, days, total, details, slots, startTime, endTime, service, createdAt, expiresAt } = b;
+  return Buffer.from(
+    JSON.stringify({ reference, items, startDate, endDate, days, total, details, slots, startTime, endTime, service, createdAt, expiresAt }),
+  ).toString(
     "base64url",
   );
 }

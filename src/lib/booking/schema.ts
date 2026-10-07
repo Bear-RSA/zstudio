@@ -4,6 +4,8 @@ import { isIsoDate } from "./dates";
 export const MAX_RANGE_DAYS = 31;
 // Firestore transactions cap at 500 writes; each line × day is one write.
 export const MAX_WRITES = 450;
+/** Per-person packages (headshots) online; bigger groups are negotiated directly. */
+export const MAX_SERVICE_PEOPLE = 4;
 
 const isoDate = z.string().refine(isIsoDate, "Invalid date");
 
@@ -31,6 +33,30 @@ export const enquirySchema = z.object({
   customer: customerSchema,
   acceptTerms: z.literal(true, { message: "Please accept the hire terms" }),
   // Honeypot — real users never see or fill this.
+  website: z.string().max(0).optional(),
+});
+
+/** A studio space for consecutive half-hours on one day. Opening hours are checked in the action. */
+export const spaceBookingSchema = z.object({
+  resourceId: z.string().min(1).max(100),
+  date: isoDate,
+  startTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Invalid time"),
+  slots: z.number().int().min(1).max(24),
+  customer: customerSchema,
+  acceptTerms: z.literal(true, { message: "Please accept the booking terms" }),
+  website: z.string().max(0).optional(),
+});
+
+/** A production service package on one day. Room, hours and people are checked in the action. */
+export const serviceBookingSchema = z.object({
+  serviceId: z.string().min(1).max(100),
+  packageId: z.string().min(1).max(60),
+  roomId: z.string().min(1).max(100).optional(),
+  people: z.number().int().min(1).max(MAX_SERVICE_PEOPLE),
+  date: isoDate,
+  startTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Invalid time"),
+  customer: customerSchema,
+  acceptTerms: z.literal(true, { message: "Please accept the booking terms" }),
   website: z.string().max(0).optional(),
 });
 

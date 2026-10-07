@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { addDays, dayCount, expandRange, isIsoDate, todaySA } from "./dates";
 import { findConflicts, usedUnits } from "./availability";
-import { quote } from "./pricing";
+import { quote, quoteService, quoteSpace, spaceRates } from "./pricing";
+import { dayStartTimes, formatDuration, isOpenDay, slotKeys, slotsUntilClose } from "./slots";
 import { generateReference, REFERENCE_PATTERN } from "./reference";
 import { formatRand } from "../money";
 import type { BlockedDate, Resource } from "./types";
@@ -119,5 +120,62 @@ describe("reference + money", () => {
     expect(formatRand(1250)).toBe("R1,250");
     expect(formatRand(85)).toBe("R85");
     expect(formatRand(1_250_000)).toBe("R1,250,000");
+  });
+});
+
+describe("studio slots", () => {
+  it("offers half-hour starts within opening hours", () => {
+    const times = dayStartTimes();
+    expect(times[0]).toBe("08:00");
+    expect(times.at(-1)).toBe("16:30");
+    expect(times).toHaveLength(18);
+    expect(slotsUntilClose("15:30")).toBe(3);
+  });
+
+  it("keys consecutive slots", () => {
+    expect(slotKeys("2026-10-08", "10:30", 3)).toEqual(["2026-10-08T10:30", "2026-10-08T11:00", "2026-10-08T11:30"]);
+  });
+
+  it("is closed on Sundays", () => {
+    expect(isOpenDay("2026-10-11")).toBe(false); // Sunday
+    expect(isOpenDay("2026-10-10")).toBe(true); // Saturday
+  });
+
+  it("formats durations", () => {
+    expect([1, 2, 3, 4].map(formatDuration)).toEqual(["30 min", "1 hour", "1½ hours", "2 hours"]);
+  });
+
+  it("prices a space by the half hour", () => {
+    const boardroom: Resource = {
+      id: "boardroom",
+      kind: "studio",
+      slug: "boardroom",
+      name: "Boardroom",
+      category: "Studio",
+      description: "",
+      specs: [],
+      dailyRate: 150,
+      minSlots: 2,
+      stock: 1,
+      images: [],
+      active: true,
+      sortOrder: 0,
+    };
+    expect(quoteSpace(boardroom, 3).total).toBe(450);
+    expect(spaceRates(boardroom)).toEqual([{ amount: 300, unit: "per hour" }]);
+    expect(spaceRates({ dailyRate: 400 })).toEqual([
+      { amount: 400, unit: "for 30 minutes" },
+      { amount: 800, unit: "for 1 hour" },
+    ]);
+  });
+});
+
+describe("service packages", () => {
+  it("prices per person when the package says so", () => {
+    const headshots = { id: "headshots", kind: "service", name: "Headshots" } as Resource;
+    const pkg = { id: "per-person", label: "30 minutes per person", slots: 1, price: 1000, location: "studio" as const, perPerson: true };
+    const q = quoteService(headshots, pkg, 3);
+    expect(q.total).toBe(3000);
+    expect(q.lines[0]).toMatchObject({ name: "Headshots · 30 minutes per person", qty: 3, dailyRate: 1000 });
   });
 });
